@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Electron / builds
+dist/
+out/
+build/
+
+# Vite
+frontend/dist/
+
+# Logs
+*.log
+
+# Temporary runtime files
+command.signal
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Optional compiled AHK binaries
+*.exe
