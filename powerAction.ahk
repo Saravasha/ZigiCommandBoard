@@ -8,16 +8,18 @@ delay  = %2%   ; second argument
 device = %3%   ; third argument
 
 ;  FOR DEBUGGING ONLY ;
-;  MsgBox, action=%action%`ndelay=%delay%`ndevice=%device%
+; MsgBox, % "action = " action " delay = " delay " device = " device
 
 PlaySpeakers() 
 {    
     SoundPlay, %A_WinDir%\Media\Starcrafty\Speakers.wav, wait
 }
 
-if (device != "Speakers")
+
+if (device != "Speakers" && action = "shutdown")
 {    
     RunWait, nircmd setdefaultsounddevice "Speakers"
+    device := "Speakers"
     PlaySpeakers()
 }
 
@@ -42,7 +44,7 @@ else if (action = "reboot")
 {
     Shutdown, 2
 }
-;MsgBox, "%action%"
+
 Gui, Destroy
 ExitApp
 return

@@ -1,5 +1,5 @@
 {
-  "name": "ahk-command-board",
+  "name": "zigi-command-board",
   "version": "1.0.0",
   "main": "electron/main.js",
   "scripts": {
@@ -8,8 +8,8 @@
     "dist": "npm run build && electron-builder"
   },
   "build": {
-    "appId": "com.ahkcommandboard.app",
-    "productName": "AHK Command Board",
+    "appId": "com.zigicommandboard.app",
+    "productName": "Zigi Command Board",
     "directories": {
       "output": "dist"
     },

@@ -20,7 +20,7 @@ WinMinimizeAll() {
     WinMinimizeAll
     return
 }
-
+  
 ; @id max_all
 ; @name Maximize All Windows
 ; @desc Maximizes all visible windows
@@ -42,13 +42,6 @@ MaxAllWindows() {
         ; skip GUI windows
         if (class = "AutoHotkeyGUI")
             continue
-
-        ; skip all GUIs in blacklist
-        for _, blocked in guiBlacklist
-        {
-            if (this_id = blocked)
-                continue 2   ; jump out of WinGet loop iteration
-        }  
 
         WinMaximize, ahk_id %this_id%
     }
