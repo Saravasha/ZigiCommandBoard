@@ -4,6 +4,20 @@
 ; Globals
 ; --------------------
 
+;--------------------
+; Globals
+;--------------------
+
+; Register GUI helper
+global guiBlacklist := []
+
+RegisterGUI(hwnd)
+{
+
+    guiBlacklist.Push(hwnd)
+}
+
+
 global overlayVisible := false
 global overlayEnabled := true
 

@@ -27,21 +27,8 @@ IsGameActive()
 }
 
 ;--------------------
-; Globals
-;--------------------
-
-; Register GUI helper
-global guiBlacklist := []
-
-;--------------------
 ; Functions
 ;--------------------
-
-RegisterGUI(hwnd)
-{
-
-    guiBlacklist.Push(hwnd)
-}
 
 RunCommand(id)
 {
@@ -61,6 +48,9 @@ SetTimer, CheckModifiersFn, 50
 
 CheckModifiersFn() {
     global overlayVisible
+
+    if (A_IsSuspended)
+        return
 
     ctrl  := GetKeyState("Ctrl", "P")
     shift := GetKeyState("Shift", "P")

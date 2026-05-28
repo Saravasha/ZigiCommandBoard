@@ -2,13 +2,14 @@
 #NoTrayIcon
 #SingleInstance Force
 
-global CommandMap := {}
+#Include %A_ScriptDir%\AudioService.ahk
+#include %A_ScriptDir%\UIService.ahk
 
+global CommandMap := {}
 
 ;--------------------
 ; Functions
 ;--------------------
-
 
 ; @id minimize_all
 ; @name Minimize All Windows
