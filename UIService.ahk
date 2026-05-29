@@ -4,19 +4,8 @@
 ; Globals
 ; --------------------
 
-;--------------------
-; Globals
-;--------------------
-
 ; Register GUI helper
 global guiBlacklist := []
-
-RegisterGUI(hwnd)
-{
-
-    guiBlacklist.Push(hwnd)
-}
-
 
 global overlayVisible := false
 global overlayEnabled := true
@@ -24,106 +13,184 @@ global overlayEnabled := true
 global widgetWidth := 801
 global widgetHeight := 475
 
-global x := 0
-global currentY := -475
+global overlay_x := 0
+global overlay_y := -475
 
-global targetY := 0
-global hiddenY := -475
-global slideSpeed := 35
+global overlayTargetY := 0
+global overlayHiddenY := -475
+global overlaySlideSpeed := 35
 
-OverlayShow() {
-    global x, currentY, overlayVisible
+
+;---------------------
+; Helper Functions
+;---------------------
+__BuildOptions(type, params)
+{
+    if (type = "CommandBoard")
+        return "NoActivate x" . params.x . " y" . params.y
+    
+    if (type = "Notification")
+        {
+            x := (params.x != "") ? params.x : 0
+            y := (params.y != "") ? params.y : 0
+            w := (params.w != "") ? params.w : 200
+            h := (params.h != "") ? params.h : 30
+            
+            return "NoActivate x" x " y" y " w" w " h" h
+        }
+        MsgBox, Invalid UI option type: %type%
+    return ""
+}
+
+; --------------------
+; Private Functions
+; --------------------
+
+__notificationToggleCloseTimer()
+{
+    __Notification_Close()
+}
+
+__Notification_Close()
+{
+    __HideGUI("NotificationUI")
+}
+
+__HideGUI(gui)
+{
+    Gui, %gui%:Hide
+}
+
+__ShowGUI(gui, options, title)
+{
+    Gui, %gui%:Show, %options%, %title%
+}
+
+__ShowCommandBoard()
+{
+    global overlay_x, overlay_y
+
+    options := __BuildOptions("CommandBoard", {x: overlay_x, y: overlay_y})
+    __ShowGUI("CommandBoardUI", options, "OverlayWidget")
+}
+
+; --------------------
+; Functions
+; --------------------
+
+RegisterGUI(hwnd)
+{
+    global guiBlacklist
+    guiBlacklist.Push(hwnd)
+}
+
+UI_CreateCommandBoard() {
+
+    global widgetWidth
+    global widgetHeight
+
+    global overlay_x
+    global overlay_y
+
+    global overlayTargetY
+    global overlayHiddenY
+    global overlaySlideSpeed
+ 
+    SysGet, wa, MonitorWorkArea
+    
+    overlay_x := waRight - widgetWidth - 10
+    overlay_y := overlayHiddenY
+    
+    Gui, CommandBoardUI:+AlwaysOnTop -Caption +ToolWindow +E0x20
+    Gui, CommandBoardUI:Color, 000000
+    Gui, CommandBoardUI:Add, Picture, x0 y0 w801 h475, C:\Users\Siavash Gosheh\OneDrive\Pictures\Command Map.png
+    
+    options := "Hide x" . overlay_x . " y" . overlay_y
+    __ShowGUI("CommandBoardUI", options, "OverlayWidget")
+    Gui, CommandBoardUI:+LastFound
+    hwnd := WinExist()
+    RegisterGUI(hwnd)
+}
+UI_CreateCommandBoard()
+
+
+UI_CommandBoard_Show() {
+    global overlay_x, overlay_y, overlayVisible
 
     overlayVisible := true
 
-    Gui, 2:Show, % "NoActivate x" x " y" currentY, OverlayWidget
+    __ShowCommandBoard()
 }
 
-OverlayHide() {
+UI_CommandBoard_Hide() {
     global overlayVisible
 
     overlayVisible := false
-    Gui, 2:Hide
+    __HideGUI("CommandBoardUI")
 }
 
 
-OverlaySlideIn() {
-    global currentY, x, targetY, slideSpeed
+UI_CommandBoard_SlideIn() {
+    global overlay_y, overlay_x, overlayTargetY, overlaySlideSpeed
 
-    currentY += slideSpeed
+    overlay_y += overlaySlideSpeed
 
-    if (currentY >= targetY) {
-        currentY := targetY
-        SetTimer, OverlaySlideIn, Off
+    if (overlay_y >= overlayTargetY) {
+        overlay_y := overlayTargetY
+        SetTimer, UI_CommandBoard_SlideIn, Off
     }
 
-    Gui, 2:Show, % "NoActivate x" x " y" currentY, OverlayWidget
+    __ShowCommandBoard()
 }
 
-OverlaySlideOut() {
-    global currentY, x, hiddenY, slideSpeed, overlayVisible
+UI_CommandBoard_SlideOut() {
+    global overlay_y, overlay_x, overlayHiddenY, overlaySlideSpeed, overlayVisible
 
-    currentY -= slideSpeed
+    overlay_y -= overlaySlideSpeed
 
-    if (currentY <= hiddenY) {
-        currentY := hiddenY
-        SetTimer, OverlaySlideOut, Off
-        Gui, 2:Hide
+    if (overlay_y <= overlayHiddenY) {
+        overlay_y := overlayHiddenY
+        SetTimer, UI_CommandBoard_SlideOut, Off
+        __HideGUI("CommandBoardUI")
         overlayVisible := false
         return
     }
 
-    Gui, 2:Show, % "NoActivate x" x " y" currentY, OverlayWidget
+    __ShowCommandBoard()
 }
 
-SysGet, wa, MonitorWorkArea
-
-x := waRight - widgetWidth - 10
-currentY := hiddenY
-
-Gui, 2:+AlwaysOnTop -Caption +ToolWindow +E0x20
-Gui, 2:Color, 000000
-Gui, 2:Add, Picture, x0 y0 w801 h475, C:\Users\Siavash Gosheh\OneDrive\Pictures\Command Map.png
-
-Gui, 2:Show, % "Hide x" x " y" currentY, OverlayWidget
-Gui, 2:+LastFound
-hwnd := WinExist()
-RegisterGUI(hwnd)
-
-soundToggleClose()
-{
-    Gui, 1:Hide
-}
-
-__soundToggleCloseTimer()
-{
-    soundToggleClose()
-}
 
 ; Display sound toggle GUI
-soundToggleBox(device)
+UI_Notification_Show(text)
 {
+    Gui, NotificationUI:Destroy
 
-    ; always rebuild cleanly (no conditional destroy)
-    Gui, 1:Destroy
+    Gui, NotificationUI:+ToolWindow -Caption +AlwaysOnTop +E0x20
+    Gui, NotificationUI:Color, 202020
+    Gui, NotificationUI:Font, s10, Segoe UI
 
-    Gui, 1:+ToolWindow -Caption +AlwaysOnTop +E0x20
-    Gui, 1:Color, 202020
-    Gui, 1:Font, s10, Segoe UI
+    Gui, NotificationUI:Add, Text, x15 y8 cWhite, AHK: %text%
 
-    Gui, 1:Add, Text, x35 y8 cWhite, Default sound: %device%
+    Gui, NotificationUI:Show, Hide AutoSize
+    Gui, NotificationUI:Default
+    GuiControlGet, textPos, Pos, NotificationText
 
-    SysGet, screenx, 0
-    SysGet, screeny, 1
+    padding := 30
+    guiWidth := (StrLen(text) * 7) + 60
+    guiHeight := 30
 
-    xpos := screenx - 275
-    ypos := screeny - 100
+    SysGet, wa, MonitorWorkArea
+    xpos := waRight - guiWidth - 20 
+    ypos := waBottom - guiHeight - 20
 
-    Gui, 1:Show, NoActivate x%xpos% y%ypos% h30 w200, soundToggleWin
+    MsgBox % "x=" xpos " y=" ypos " w=" guiWidth " h=" guiHeight
+    options := __BuildOptions("Notification", {x: xpos, y: ypos, w: guiWidth, h: guiHeight})
 
-    Gui, 1:+LastFound
+    __ShowGUI("NotificationUI", options, "Notification")
+
+    Gui, NotificationUI:+LastFound
     hwnd := WinExist()
     RegisterGUI(hwnd)
 
-    SetTimer, __soundToggleCloseTimer, -2000
+    SetTimer, __notificationToggleCloseTimer, -2000
 }

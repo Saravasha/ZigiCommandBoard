@@ -1,6 +1,5 @@
 ; AudioService.ahk
 
-
 ;--------------------
 ; Globals
 ;--------------------
@@ -12,17 +11,29 @@ global device := "Speakers"
 ; Functions
 ;--------------------
 
-soundToggleState(state)
-{
-    SoundPlay, C:\Users\Siavash Gosheh\Music\%state%.wav
+Audio_PlaySound(path, wait := false) {
+    
+    if (wait) {
+        SoundPlay, %path%, wait
+        return
+    }
+    SoundPlay, %path%, %wait%
 }
 
-Audio_PlayDeviceName(device) 
+Audio_PlayAHKState(state, wait := false)
 {
-    SoundPlay, %A_WinDir%\Media\Starcrafty\%device%.wav
+    path := "C:\Users\Siavash Gosheh\Music\" state ".wav"
+    Audio_PlaySound(path, wait)
 }
 
-CycleAudioDevice()
+Audio_PlayDeviceName(device, wait := false) 
+{
+    path := A_WinDir "\Media\Starcrafty\" device ".wav"
+    Audio_PlaySound(path, wait)
+    
+}
+
+Audio_CycleAudioDevice()
 {
    if (device == "Speakers") 
     {   
@@ -38,7 +49,7 @@ CycleAudioDevice()
     }
 
     RunWait, nircmd setdefaultsounddevice "%device%"
-    soundToggleBox(device)
+    UI_Notification_Show("Default device: " . device)
     Audio_PlayDeviceName(device)
 
 }

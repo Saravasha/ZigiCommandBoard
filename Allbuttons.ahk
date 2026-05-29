@@ -5,7 +5,7 @@
 #SingleInstance Force     ; Only allows one instance of the script to run.
 FileEncoding, UTF-8
 ;Modifiers: ; + = shift ; ! = alt ; ^ = ctrl
-
+#include %A_ScriptDir%\Orchestrator.ahk
 ;--------------------
 ; Globals
 ;--------------------
@@ -13,6 +13,10 @@ ahkExe := "C:\Program Files\AutoHotkey\AutoHotkey.exe"
 commandScript := A_ScriptDir . "\Commands.ahk"
 
 SetBatchLines, -1
+
+;--------------------
+; Functions
+;--------------------
 
 IsGameActive()
 { 
@@ -26,10 +30,6 @@ IsGameActive()
     return false
 }
 
-;--------------------
-; Functions
-;--------------------
-
 RunCommand(id)
 {
     global ahkExe, commandScript
@@ -39,16 +39,15 @@ RunCommand(id)
     RunWait, %cmd%
 }
 
-#include %A_ScriptDir%\UIService.ahk
 ; -------------------
-; PERSISTENT LISTENER
+; Persistent Listener
 ; -------------------
 
 SetTimer, CheckModifiersFn, 50
 
 CheckModifiersFn() {
     global overlayVisible
-
+    ; Escape early if script is suspended
     if (A_IsSuspended)
         return
 
@@ -60,21 +59,20 @@ CheckModifiersFn() {
     {
         if (!overlayVisible)
         {
-            OverlayShow()
-            SetTimer, OverlaySlideIn, 10
+            Orchestrator_CommandBoardShow()
         }
     }
     else
     {
         if (overlayVisible)
         {
-            SetTimer, OverlaySlideOut, 10
+            Orchestrator_CommandBoardSlideOut()
         }
     }
 }
 
 ; --------------------
-; HOTKEYS
+; Hotkeys
 ; --------------------
 
 !^E::
@@ -165,45 +163,18 @@ return
 
 ; -- AHK Script Toggler
 +F5::
-Suspend Permit
-
-toggle := !toggle
-
-if (toggle)
-{
-    overlayEnabled := false
-
-    Suspend On
-
-    Gui, 2:Hide
-    overlayVisible := false
-
-    soundToggleState("ahk off")
-}
-else
-{
-    overlayEnabled := true
-
-    Suspend Off
-
-    soundToggleState("ahk online")
-}
-
+Suspend, Permit
+Orchestrator_ToggleAHK()
 return
 
 ; -- AHK reload
 #F5::
 Suspend Permit
-soundToggleState("ahk reloading")
-SetTimer, __reloadAHK, -1500
-return
-
-__reloadAHK:
-Reload
+Orchestrator_ReloadAHK()
 return
 
 +Pause::
-CycleAudioDevice()
+Orchestrator_CycleAudioDevice()
 return
 
 ; -- Close windows/apps Shortcut. Ctrl+W
@@ -212,7 +183,6 @@ return
 WinClose
 return
 #If 
-
 
 #If !IsGameActive()
 
@@ -233,22 +203,12 @@ return
 return
 #If
 
-#Include %A_ScriptDir%\AudioService.ahk
-
 !+PgUp::
-Run, % A_ScriptDir "\powerAction.ahk reboot 5 " device
+Orchestrator_RebootPC()
 return
 
 !+PgDn::
-Run, % A_ScriptDir "\powerAction.ahk shutdown 5 " device
-
-if (device != "Speakers")
-{
-    device := "Speakers"
-    Run, nircmd setdefaultsounddevice "Speakers"
-    soundToggleBox("Speakers")
-    RunWait, nircmd setdefaultsounddevice "Speakers"
-}
+Orchestrator_ShutdownPC()
 return
 
 #IfWinActive Warcraft III

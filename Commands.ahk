@@ -2,9 +2,6 @@
 #NoTrayIcon
 #SingleInstance Force
 
-#Include %A_ScriptDir%\AudioService.ahk
-#include %A_ScriptDir%\UIService.ahk
-
 global CommandMap := {}
 
 ;--------------------
