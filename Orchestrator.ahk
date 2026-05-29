@@ -60,18 +60,21 @@ Orchestrator_ReloadAHK() {
 
 Orchestrator_RebootPC() 
 {
+    UI_Notification_Show("Rebooting...")
     Run % A_ScriptDir "\powerAction.ahk reboot 5 " device
 }
 
 Orchestrator_ShutdownPC() 
 {
-    Run % A_ScriptDir "\powerAction.ahk shutdown 5 " device
-
+    global device
     if (device != "Speakers")
-    {
+    {    
         device := "Speakers"
-        Run, nircmd setdefaultsounddevice "Speakers"
-        UI_Notification_Show("Default device: " . "Speakers")
-        RunWait, nircmd setdefaultsounddevice "Speakers"
+        RunWait, % "nircmd setdefaultsounddevice ""Speakers"""
+        Audio_PlayDeviceName(device, true)
+        UI_Notification_Show("Default device: " . device)
     }
+
+    UI_Notification_Show("Shutting down...") 
+    Run % A_ScriptDir "\powerAction.ahk shutdown 5 " device
 }
