@@ -22,16 +22,16 @@ return
 
 __DoAction:
 
-MsgBox, % "Performing action: " action " with device: " device "with a delay of " delay " seconds."
+; MsgBox, % "Performing action: " action " with device: " device "with a delay of " delay " seconds."
 
-; if (action = "shutdown")
-; {
-;     Shutdown, 1
-; }
-; else if (action = "reboot")
-; {
-;     Shutdown, 2
-; }
+if (action = "shutdown")
+{
+    Shutdown, 1
+}
+else if (action = "reboot")
+{
+    Shutdown, 2
+}
 
 Gui, Destroy
 ExitApp
