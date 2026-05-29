@@ -183,7 +183,6 @@ UI_Notification_Show(text)
     xpos := waRight - guiWidth - 20 
     ypos := waBottom - guiHeight - 20
 
-    MsgBox % "x=" xpos " y=" ypos " w=" guiWidth " h=" guiHeight
     options := __BuildOptions("Notification", {x: xpos, y: ypos, w: guiWidth, h: guiHeight})
 
     __ShowGUI("NotificationUI", options, "Notification")
