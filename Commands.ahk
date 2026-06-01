@@ -24,26 +24,33 @@ WinMinimizeAll() {
 ; @desc Maximizes all visible windows
 ; @hotkey Ctrl+Shift+Alt+Z
 ; @category Window Management
-MaxAllWindows() {
-
-    MsgBox, MAX ALL WINDOWS FIRED
-    
+MaxAllWindows()
+{
     WinGet, id, List
 
     Loop, %id%
+         
     {
-        this_id := id%A_Index%
-        WinGetClass, class, ahk_id %this_id%
-        if (class = "Progman" || class = "WorkerW")
-            continue
+        hwnd := id%A_Index%
 
-        ; skip GUI windows
+        WinGet, MinMax, MinMax, ahk_id %hwnd%
+        WinGetClass, class, ahk_id %hwnd%
+
+        if (class = "Progman")
+            continue
+        if (class = "WorkerW")
+            continue
         if (class = "AutoHotkeyGUI")
             continue
+        if (class = "Shell_TrayWnd")
+            continue
 
-        WinMaximize, ahk_id %this_id%
+        WinGetTitle, title, ahk_id %hwnd%
+        if (title = "")
+            continue
+
+        WinMaximize, ahk_id %hwnd%
     }
-    return
 }
 
 ; @id horizontal_tile_windows

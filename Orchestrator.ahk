@@ -3,6 +3,8 @@
 #include %A_ScriptDir%\UIService.ahk
 #include %A_ScriptDir%\AudioService.ahk
 
+; --- Read arguments
+device = %1%   ; first argument
 ; --------------------
 ; Functions
 ; --------------------
@@ -78,3 +80,4 @@ Orchestrator_ShutdownPC()
     UI_Notification_Show("Shutting down...") 
     Run % A_ScriptDir "\powerAction.ahk shutdown 5 " device
 }
+

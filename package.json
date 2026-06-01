@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "electron/main.js",
   "scripts": {
-    "dev": "concurrently \"vite\" \"electron .\"",
+    "dev": "concurrently \"npm --prefix ui run dev\" \"electron .\"",
     "build": "vite build",
     "dist": "npm run build && electron-builder"
   },
@@ -26,5 +26,11 @@
         "nsis"
       ]
     }
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.0",
+    "electron": "^42.3.0",
+    "electron-builder": "^26.8.1",
+    "vite": "^8.0.14"
   }
 }

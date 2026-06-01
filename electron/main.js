@@ -14,7 +14,7 @@ let commands = [];
 // --------------------
 
 const workerScript = path.join(__dirname, "..", "Commands.ahk");
-
+console.log("PRELOAD PATH:", path.join(__dirname, "preload.js"));
 // --------------------
 // WINDOW
 // --------------------
@@ -29,7 +29,13 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadURL("http://localhost:5173");
+  const isDev = !app.isPackaged;
+
+  if (isDev) {
+    mainWindow.loadURL("http://localhost:5173");
+  } else {
+    mainWindow.loadFile(path.join(__dirname, "../ui/dist/index.html"));
+  }
 }
 
 // --------------------

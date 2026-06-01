@@ -10,17 +10,26 @@ device = %3%   ; third argument
 ;  FOR DEBUGGING ONLY ;
 ; MsgBox, % "action = " action " delay = " delay " device = " device
 
-SoundPlay, %A_WinDir%\Media\Starcrafty\Stargate_What.wav
 
 ; Create hidden GUI to keep thread alive
 Gui, +AlwaysOnTop -SysMenu +ToolWindow
 Gui, Show, Hide
 
-msDelay := delay * 1000
-SetTimer, __DoAction, -%msDelay%
+if (device != "Speakers" && action == "shutdown")
+    {
+        RunWait, % "nircmd setdefaultsounddevice ""Speakers"""
+        path := A_WinDir "\Media\Starcrafty\" device ".wav"
+        SoundPlay, %path%, wait
+    }
+    
+    msDelay := delay * 1000
+    SoundPlay, %A_WinDir%\Media\Starcrafty\Stargate_What.wav
+    SetTimer, __DoAction, -%msDelay%
 return
 
+
 __DoAction:
+
 
 ; MsgBox, % "Performing action: " action " with device: " device "with a delay of " delay " seconds."
 
