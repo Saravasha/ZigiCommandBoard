@@ -167,7 +167,7 @@
 
   &::before,
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: -4.5px;
     border: 5px solid transparent;
@@ -181,4 +181,16 @@
     right: 0;
     border-right-color: var(--border);
   }
+}
+
+.board {
+  transition: transform 250ms ease;
+}
+
+.board.hidden {
+  transform: translateX(-100%);
+}
+
+.board.visible {
+  transform: translateX(0);
 }

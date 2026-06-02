@@ -10,7 +10,7 @@ FileEncoding, UTF-8
 ; Globals
 ;--------------------
 ahkExe := "C:\Program Files\AutoHotkey\AutoHotkey.exe"
-commandScript := A_ScriptDir . "\Commands.ahk"
+commandScript := A_ScriptDir . "\electron\Commands.ahk"
 
 SetBatchLines, -1
 
@@ -60,6 +60,7 @@ CheckModifiersFn() {
         if (!overlayVisible)
         {
             Orchestrator_CommandBoardShow()
+            UrlDownloadToFile, http://localhost:7777/show, *
         }
     }
     else
@@ -67,6 +68,7 @@ CheckModifiersFn() {
         if (overlayVisible)
         {
             Orchestrator_CommandBoardSlideOut()
+            UrlDownloadToFile, http://localhost:7777/hide, *
         }
     }
 }

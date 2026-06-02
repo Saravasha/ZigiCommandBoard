@@ -1,11 +1,13 @@
 {
   "name": "zigi-command-board",
   "version": "1.0.0",
+  "description": "A command board application built with Electron and Vite.",
+  "author": "Saravasha",
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently \"npm --prefix ui run dev\" \"electron .\"",
-    "build": "vite build",
-    "dist": "npm run build && electron-builder"
+    "build": "npm --prefix ui run build",
+    "dist": "npm run build && electron-builder --win portable"
   },
   "build": {
     "appId": "com.zigicommandboard.app",
@@ -15,17 +17,20 @@
     },
     "files": [
       "electron/**/*",
-      "frontend/dist/**/*",
+      "ui/dist/**/*",
       "parser/**/*",
-      "Commands.ahk",
-      "Allbuttons.ahk"
+      "package.json"
     ],
     "win": {
+      "icon": "assets/icon.ico",
       "target": [
         "portable",
         "nsis"
       ]
-    }
+    },
+    "asarUnpack": [
+      "electron/*.ahk"
+    ]
   },
   "devDependencies": {
     "concurrently": "^10.0.0",

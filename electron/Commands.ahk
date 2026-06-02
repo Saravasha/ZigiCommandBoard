@@ -8,7 +8,6 @@ global CommandMap := {}
 ; Functions
 ;--------------------
 
-
 ; @id minimize_all
 ; @name Minimize All Windows
 ; @desc Minimizes all windows
