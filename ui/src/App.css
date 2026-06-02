@@ -184,7 +184,7 @@
 }
 
 .board {
-  transition: transform 250ms ease;
+  position: relative;
 }
 
 .board.hidden {
@@ -193,4 +193,36 @@
 
 .board.visible {
   transform: translateX(0);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+}
+
+.row {
+  display: flex;
+  margin-left: 60px;
+}
+
+.row:nth-child(even) {
+  margin-left: 0;
+}
+
+.row {
+  margin-top: -20px;
+}
+
+.board {
+  position: relative;
+}
+
+.hex {
+  position: absolute;
+
+  width: 120px;
+  height: 120px;
+
+  /* IMPORTANT: center origin */
+  transform: translate(-50%, -50%);
 }

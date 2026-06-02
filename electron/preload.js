@@ -6,6 +6,10 @@ contextBridge.exposeInMainWorld("api", {
   showDashboard: () => ipcRenderer.send("show-dashboard"),
   hideDashboard: () => ipcRenderer.send("hide-dashboard"),
 
-  onDashboardVisible: (callback) =>
-    ipcRenderer.on("dashboard-visible", (_, visible) => callback(visible)),
+  onDashboardVisible: (callback) => {
+    const handler = (_, v) => callback(v);
+    ipcRenderer.on("dashboard-visible", handler);
+
+    return () => ipcRenderer.removeListener("dashboard-visible", handler);
+  },
 });

@@ -11,7 +11,7 @@ FileEncoding, UTF-8
 ;--------------------
 ahkExe := "C:\Program Files\AutoHotkey\AutoHotkey.exe"
 commandScript := A_ScriptDir . "\electron\Commands.ahk"
-
+wasDown := false
 SetBatchLines, -1
 
 ;--------------------
@@ -39,6 +39,35 @@ RunCommand(id)
     RunWait, %cmd%
 }
 
+SendPipe(msg) {
+
+    pipe := DllCall("CreateFile"
+        , "Str", "\\.\pipe\zigi-board"
+        , "UInt", 0x40000000  ; GENERIC_WRITE
+        , "UInt", 0
+        , "UInt", 0
+        , "UInt", 3          ; OPEN_EXISTING
+        , "UInt", 0
+        , "UInt", 0
+        , "Ptr")
+
+    if (pipe = -1)
+        return false
+        data := msg . "`n"
+        VarSetCapacity(buf, StrPut(data, "UTF-8"), 0)
+        StrPut(data, &buf, "UTF-8")
+
+        DllCall("WriteFile"
+            , "Ptr", pipe
+            , "Ptr", &buf
+            , "UInt", StrLen(data)
+            , "UInt*", written
+            , "UInt", 0)
+
+    DllCall("CloseHandle", "Ptr", pipe)
+    return true
+}
+
 ; -------------------
 ; Persistent Listener
 ; -------------------
@@ -47,6 +76,7 @@ SetTimer, CheckModifiersFn, 50
 
 CheckModifiersFn() {
     global overlayVisible
+    global wasDown
     ; Escape early if script is suspended
     if (A_IsSuspended)
         return
@@ -55,21 +85,21 @@ CheckModifiersFn() {
     shift := GetKeyState("Shift", "P")
     alt   := GetKeyState("Alt", "P")
 
-    if (ctrl && shift && alt)
-    {
-        if (!overlayVisible)
+        if (ctrl && shift && alt)
         {
-            Orchestrator_CommandBoardShow()
-            UrlDownloadToFile, http://localhost:7777/show, *
+            if (!wasDown)
+            {
+                SendPipe("show")
+                wasDown := true
+            }
         }
-    }
-    else
-    {
-        if (overlayVisible)
+        else
         {
-            Orchestrator_CommandBoardSlideOut()
-            UrlDownloadToFile, http://localhost:7777/hide, *
-        }
+            if (wasDown)
+            {
+                SendPipe("hide")
+                wasDown := false
+            }
     }
 }
 
