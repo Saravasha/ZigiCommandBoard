@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "concurrently \"npm --prefix ui run dev\" \"electron .\"",
     "build": "npm --prefix ui run build",
-    "dist": "npm run build && electron-builder --win portable"
+    "dist": "npm run build && electron-builder --win portable  && node scripts/pack.js"
   },
   "build": {
     "appId": "com.zigicommandboard.app",
@@ -21,16 +21,19 @@
       "parser/**/*",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      }
+    ],
     "win": {
       "icon": "assets/icon.ico",
       "target": [
         "portable",
         "nsis"
       ]
-    },
-    "asarUnpack": [
-      "electron/*.ahk"
-    ]
+    }
   },
   "devDependencies": {
     "concurrently": "^10.0.0",

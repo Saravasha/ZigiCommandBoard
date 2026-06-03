@@ -3,29 +3,33 @@ console.log("🔥 ELECTRON MAIN FILE LOADED");
 const path = require("path");
 const { execFile } = require("child_process");
 const fs = require("fs");
-const { app, BrowserWindow, ipcMain, screen } = require("electron");
+const { app, BrowserWindow, ipcMain, screen, Tray, Menu } = require("electron");
 const { parseAhk } = require("./parser/ahkParser");
 const net = require("net");
 
 const PIPE_NAME = "\\\\.\\pipe\\zigi-board";
 
 let pipeServer = null;
+let tray = null;
 
 let mainWindow;
 let commands = [];
+
+const isProd = app.isPackaged;
 
 // --------------------
 // PATHS
 // --------------------
 
-const workerScript = app.isPackaged
-  ? path.join(
-      process.resourcesPath,
-      "app.asar.unpacked",
-      "electron",
-      "Commands.ahk",
-    )
-  : path.join(__dirname, "Commands.ahk");
+const iconPath = isProd
+  ? path.join(process.resourcesPath, "assets", "icon.ico")
+  : path.join(__dirname, "../assets/icon.ico");
+
+const baseDir = isProd
+  ? path.dirname(process.execPath) // EXE folder
+  : path.join(__dirname, ".."); // project root
+
+const workerScript = path.join(baseDir, "runtime", "Commands.ahk");
 console.log("PRELOAD PATH:", path.join(__dirname, "preload.js"));
 const ahkExe = "C:\\Program Files\\AutoHotkey\\AutoHotkey.exe";
 
@@ -34,12 +38,13 @@ const ahkExe = "C:\\Program Files\\AutoHotkey\\AutoHotkey.exe";
 // --------------------
 
 function moveToTopRight(win) {
+  const display = screen.getPrimaryDisplay();
   const { width } = screen.getPrimaryDisplay().workAreaSize;
   const { workArea } = display;
 
   const winBounds = win.getBounds();
-  const x = workArea.x + workArea.width - winBounds.width - 20;
-  const y = workArea.y + 20;
+  const x = workArea.x + workArea.width - winBounds.width;
+  const y = workArea.y;
 
   win.setPosition(x, y);
 }
@@ -59,13 +64,17 @@ function createWindow() {
     height: getResponsiveSize().height,
     frame: false,
     transparent: true,
+    backgroundColor: "#00000000",
+    title: "Zigi Command Board",
     resizable: false,
     show: false,
     skipTaskbar: true,
     alwaysOnTop: true,
     x: 0,
     y: 0,
-    icon: path.join(__dirname, "../assets/icon.ico"),
+    autoHideMenuBar: true,
+
+    icon: iconPath,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
@@ -73,26 +82,69 @@ function createWindow() {
     },
   });
 
+  mainWindow.webContents.openDevTools({ mode: "detach" });
+
   const isDev = !app.isPackaged;
+  mainWindow.setTitle("Zigi Command Board");
 
   if (isDev) {
     mainWindow.loadURL("http://localhost:5173");
-    mainWindow.on("moved", () => moveToTopRight(mainWindow));
     mainWindow.webContents.setZoomFactor(1);
 
     mainWindow.webContents.on("did-finish-load", () => {
       mainWindow.webContents.send("app-ready");
+      moveToTopRight(mainWindow);
     });
   } else {
     const prodPath = path.join(__dirname, "../ui/dist/index.html");
     mainWindow.loadFile(prodPath);
-    mainWindow.on("moved", () => moveToTopRight(mainWindow));
     mainWindow.webContents.setZoomFactor(1);
 
     mainWindow.webContents.on("did-finish-load", () => {
       mainWindow.webContents.send("app-ready");
+      moveToTopRight(mainWindow);
     });
   }
+}
+
+function createTray() {
+  tray = new Tray(iconPath);
+
+  const menu = Menu.buildFromTemplate([
+    {
+      label: "Show Dashboard",
+      click: () => {
+        if (!mainWindow) return;
+
+        mainWindow.show();
+        mainWindow.focus();
+
+        mainWindow.webContents.send("dashboard-visible", true);
+      },
+    },
+    {
+      label: "Hide Dashboard",
+      click: () => {
+        if (!mainWindow) return;
+
+        mainWindow.webContents.send("dashboard-visible", false);
+
+        setTimeout(() => {
+          mainWindow.hide();
+        }, 250);
+      },
+    },
+    { type: "separator" },
+    {
+      label: "Quit",
+      click: () => {
+        app.quit();
+      },
+    },
+  ]);
+
+  tray.setToolTip("Zigi Command Board");
+  tray.setContextMenu(menu);
 }
 
 // --------------------
@@ -145,6 +197,11 @@ function startPipeServer() {
         }
       }
 
+      if (msg === "ping") {
+        console.log("pong");
+        return;
+      }
+
       if (msg === "show") {
         mainWindow.show();
         mainWindow.focus();
@@ -178,6 +235,7 @@ app.whenReady().then(() => {
     console.log("COMMANDS LOADED:", commands.length);
 
     createWindow();
+    createTray();
     startPipeServer();
   } catch (err) {
     console.error("🔥 ELECTRON STARTUP ERROR:", err);

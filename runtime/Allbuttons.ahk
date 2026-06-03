@@ -10,7 +10,7 @@ FileEncoding, UTF-8
 ; Globals
 ;--------------------
 ahkExe := "C:\Program Files\AutoHotkey\AutoHotkey.exe"
-commandScript := A_ScriptDir . "\electron\Commands.ahk"
+commandScript := A_ScriptDir . "\Commands.ahk"
 wasDown := false
 SetBatchLines, -1
 
@@ -69,12 +69,16 @@ SendPipe(msg) {
 }
 
 EnsureElectronRunning() {
-    Process, Exist, Zigi Command Board.exe
+    ; Process, Exist, Zigi Command Board.exe
+    ; if (ErrorLevel != 0)
+    ;     return
 
-    if (ErrorLevel != 0)
+    if (SendPipe("ping"))
         return
 
-    Run, % A_ScriptDir "\dist\win-unpacked\Zigi Command Board.exe"
+        Run, % A_ScriptDir "\..\Zigi Command Board.exe"
+
+    Sleep, 1500
 }
 
 ; -------------------
@@ -98,7 +102,7 @@ CheckModifiersFn() {
         {
             if (!wasDown)
             {
-                ; EnsureElectronRunning()
+                EnsureElectronRunning()
                 SendPipe("show")
                 wasDown := true
             }

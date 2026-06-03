@@ -8,26 +8,14 @@ global CommandMap := {}
 ; Functions
 ;--------------------
 
-; @id minimize_all
-; @name Minimize All Windows
-; @desc Minimizes all windows
-; @hotkey Ctrl+Alt+E
-; @category Window Management
 WinMinimizeAll() {
-    MsgBox, MINIMIZE ALL WINDOWS FIRED
     WinMinimizeAll
     return
 }
   
-; @id max_all
-; @name Maximize All Windows
-; @desc Maximizes all visible windows
-; @hotkey Ctrl+Shift+Alt+Z
-; @category Window Management
 MaxAllWindows()
 {
     WinGet, id, List
-
     Loop, %id%
          
     {
@@ -45,64 +33,47 @@ MaxAllWindows()
         if (class = "Shell_TrayWnd")
             continue
 
+        
         WinGetTitle, title, ahk_id %hwnd%
         if (title = "")
+            continue
+        ; if (title = "Zigi Command Board")
+        ;     continue
+
+        WinGet, ProcessName, ProcessName, ahk_id %hwnd%
+
+        if (ProcessName = "Zigi Command Board.exe")
+            continue
+
+        if (ProcessName = "electron.exe")
             continue
 
         WinMaximize, ahk_id %hwnd%
     }
+    return
 }
 
-; @id horizontal_tile_windows
-; @name Horizontal Tile Windows
-; @desc Tiles all visible windows horizontally
-; @hotkey Ctrl+Shift+Alt+X
-; @category Window Management
 HorizontalTileWindows() {
-    MsgBox, HORIZONTAL TILE WINDOWS FIRED
     DllCall( "TileWindows", uInt,0, Int,0, Int,0, Int,0, Int,0 )
     return
 }
 
 
-; @id cascade_windows
-; @name Cascade Windows
-; @desc Cascades all visible windows
-; @hotkey Ctrl+Shift+Alt+C
-; @category Window Management
 CascadeWindows() {
-    MsgBox, CASCADE WINDOWS FIRED
     DllCall( "CascadeWindows", uInt,0, Int,0, Int,0, Int,0, Int,0 )
     return
 }
 
-; @id vertical_tile_windows
-; @name Vertical Tile Windows
-; @desc Tiles all visible windows vertically
-; @hotkey Ctrl+Shift+Alt+V
-; @category Window Management
 VerticalTileWindows() {
-    MsgBox, VERTICAL TILE WINDOWS FIRED
     DllCall( "TileWindows", uInt,0, Int,1, Int,0, Int,0, Int,0 )
     return
 }
-; @id file_recycle_empty
-; @name Empty Recycle Bin
-; @desc Empties the recycle bin 
-; @hotkey Win+Delete
-; @category System
 
 FileRecycleEmpty() {
-    MsgBox, EMPTY TRASH FIRED
     FileRecycleEmpty
     return
 }
 
-; @id subscript_clipboard
-; @name Subscript Clipboard
-; @desc Transforms selected text to subscript and pastes it
-; @hotkey Shift+Alt+NumpadMinus
-; @category Text Transformation
 
 SubscriptClipboard() {
 
@@ -184,11 +155,6 @@ SubscriptClipboard() {
     Send ^v
 }
 
-; @id superscript_clipboard
-; @name Superscript Clipboard
-; @desc Transforms selected text to superscript and pastes it
-; @hotkey Shift+Alt+NumpadAdd
-; @category Text Transformation
 SuperscriptClipboard() {
 
     ; copy selected text
@@ -285,11 +251,6 @@ SuperscriptClipboard() {
     Send ^v
 }
 
-; @id volume_mixer
-; @name Volume Mixer
-; @desc Toggles the volume mixer
-; @hotkey Ctrl+F11
-; @category System
 VolumeMixer() {
     if WinExist("Volume Mixer")
         WinActivate
@@ -297,11 +258,6 @@ VolumeMixer() {
         Run, SndVol.exe
     return
 }
-; @id calculator
-; @name Calculator
-; @desc Opens or toggles the calculator app
-; @hotkey Ctrl+Alt+C
-; @category System
 Calculator() {
     if WinExist("Calculator")
         WinActivate
@@ -310,11 +266,6 @@ Calculator() {
     return
 }
 
-; @id downloads
-; @name Downloads
-; @desc Opens the Downloads folder
-; @hotkey Ctrl+Alt+D
-; @category System
 Downloads() {
     if WinExist("Downloads")
         WinActivate
@@ -323,11 +274,6 @@ Downloads() {
     return
 }
 
-; @id google_search_clipboard
-; @name Google Search Clipboard
-; @desc Prompts for a search query on the clipboard and searches it on Google
-; @hotkey Ctrl+Alt+Shift+G
-; @category System
 GoogleSearchClipboard() {
     Send ^g
     ClipWait, 0.5
@@ -335,11 +281,6 @@ GoogleSearchClipboard() {
     return
 }
 
-; @id google_calendar
-; @name Google Calendar
-; @desc Opens the Google Calendar app
-; @hotkey Ctrl+Alt+G
-; @category System
 GoogleCalendar() {
     if WinExist("Google Calendar")
         WinActivate
@@ -348,11 +289,6 @@ GoogleCalendar() {
     return
 }
 
-; @id gmail
-; @name Gmail
-; @desc Opens the Gmail app
-; @hotkey Ctrl+Alt+P
-; @category System
 Gmail() {
     if WinExist("Inkorgen")
         WinActivate
@@ -362,11 +298,6 @@ Gmail() {
 }
 
 
-; @id programs_and_features
-; @name Programs and Features
-; @desc Opens the Programs and Features app
-; @hotkey Ctrl+Alt+Shift+T
-; @category System
 ProgramsAndFeatures() {
     if WinExist("Programs and Features")
         WinActivate
@@ -376,11 +307,6 @@ ProgramsAndFeatures() {
 }
 
 
-; @id task_scheduler
-; @name Task Scheduler
-; @desc Opens the Task Scheduler app
-; @hotkey Ctrl+Alt+Shift+U
-; @category System
 TaskScheduler() {
     if WinExist("Task Scheduler")
         WinActivate
@@ -389,11 +315,6 @@ TaskScheduler() {
     return
 }
 
-; @id clock
-; @name Clock
-; @desc Opens the Windows Clock app
-; @hotkey Ctrl+Alt+Shift+I
-; @category System
 Clock() {
     if WinExist("Clock")
         WinActivate
@@ -402,11 +323,6 @@ Clock() {
     return
 }
 
-; @id open_with_sublime_text
-; @name Open with Sublime Text
-; @desc Opens the selected file in Sublime Text 3
-; @hotkey Shift+Alt+S
-; @category System
 OpenWithSublimeText() {
     revert_clipboard := clipboardAll
     clipboard =
@@ -419,11 +335,6 @@ clipboard := revert_clipboard
 return
 }
 
-; @id open_with_windows_media_player
-; @name Open with Windows Media Player
-; @desc Opens the selected file in Windows Media Player
-; @hotkey Shift+Alt+W
-; @category System
 OpenWithWindowsMediaPlayer() {
     revert_clipboard := clipboardAll
     clipboard =
@@ -468,7 +379,7 @@ if (A_Args.Length() > 0)
 {
     cmd := A_Args[1]
 
-    msgBox, Received command: %cmd%
+    ;msgBox, Received command: %cmd%
 
     if (CommandMap.HasKey(cmd))
     {

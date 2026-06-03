@@ -10,70 +10,34 @@ function parseAhk(filePath, options = { debug: true }) {
   log("🚀 PARSER START");
   log("FILE:", filePath);
 
-  // -------------------------
-  // STEP 1: READ FILE
-  // -------------------------
   const text = fs.readFileSync(filePath, "utf8");
-  const lines = text.split(/\r?\n/);
-
-  log("STEP 1 OK - lines:", lines.length);
 
   // -------------------------
-  // STATE
+  // STEP 1: MATCH COMMANDMAP ENTRIES
   // -------------------------
+  const commandRegex = /CommandMap\["(.+?)"\]\s*:=\s*Object\s*\(([\s\S]*?)\)/g;
+
   const commands = [];
-  let meta = {};
-  let pendingFunction = null;
+  let match;
 
-  // -------------------------
-  // STEP 2: SCAN
-  // -------------------------
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+  while ((match = commandRegex.exec(text)) !== null) {
+    const id = match[1];
+    const body = match[2];
 
-    if (options.debug && i < 5) {
-      log("LINE:", line);
-    }
+    log("FOUND COMMAND:", id);
 
-    // -------------------------
-    // META PARSING
-    // -------------------------
-    const metaMatch = line.match(/^;\s*@(\w+)\s+(.*)/);
-    if (metaMatch) {
-      const [, key, value] = metaMatch;
-      log("META:", key, value);
-      meta[key.toLowerCase()] = value;
-      continue;
-    }
+    const parsed = parseObject(body);
 
-    // -------------------------
-    // FUNCTION DETECTION
-    // -------------------------
-    const fnMatch = line.match(/^([a-zA-Z0-9_]+)\s*\(\s*\)\s*\{/);
-
-    if (fnMatch) {
-      const fnName = fnMatch[1];
-      pendingFunction = fnName;
-
-      // emit command if metadata exists
-      if (meta.name || meta.id) {
-        commands.push({
-          id: meta.id || fnName.toLowerCase(),
-          name: meta.name || fnName,
-          description: meta.desc || "",
-          hotkey: meta.hotkey || "",
-          category: meta.category || "uncategorized",
-          function: fnName,
-        });
-      }
-
-      meta = {}; // reset after binding
-    }
+    commands.push({
+      id,
+      name: parsed.name || id,
+      description: parsed.desc || "",
+      hotkey: parsed.hotkey || "",
+      category: parsed.category || "uncategorized",
+      exec: parsed.exec || null, // function reference name (string)
+    });
   }
 
-  // -------------------------
-  // STEP 3: DONE
-  // -------------------------
   log("DONE. COMMANDS:", commands.length);
 
   if (options.debug) {
@@ -81,6 +45,22 @@ function parseAhk(filePath, options = { debug: true }) {
   }
 
   return commands;
+}
+
+function parseObject(str) {
+  const result = {};
+
+  // matches: "key", "value"
+  const pairRegex = /"([^"]+)"\s*,\s*"([^"]*)"/g;
+
+  let match;
+  while ((match = pairRegex.exec(str)) !== null) {
+    const key = match[1].toLowerCase();
+    const value = match[2];
+    result[key] = value;
+  }
+
+  return result;
 }
 
 module.exports = { parseAhk };
