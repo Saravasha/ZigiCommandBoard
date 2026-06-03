@@ -1,13 +1,21 @@
 // app.jsx
 import { useEffect, useState } from "react";
-import { layoutHexPerfect } from "./layout/layoutHexPerfect";
-import "./App.css";
+
+import "./App.scss";
+// import "./assets/appReady.wav";
 
 export default function App() {
   const [commands, setCommands] = useState([]);
   const [visible, setVisible] = useState(false);
 
-  const laidOut = layoutHexPerfect(commands, 6, 120);
+  useEffect(() => {
+    window.api.onAppReady(() => {
+      console.log("app ready");
+      const audio = new Audio("./assets/appReady.wav");
+      audio.volume = 0.5;
+      audio.play();
+    });
+  }, []);
 
   useEffect(() => {
     window.api.getCommands().then(setCommands);
@@ -18,11 +26,11 @@ export default function App() {
   }, []);
 
   return (
-    <div className="board">
-      {laidOut.map((cmd) => (
+    <div className="honeycomb">
+      {commands.map((cmd) => (
         <div
           key={cmd.id}
-          className="hex"
+          className="cell"
           style={{
             left: cmd.x,
             top: cmd.y,

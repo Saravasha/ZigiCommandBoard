@@ -68,6 +68,15 @@ SendPipe(msg) {
     return true
 }
 
+EnsureElectronRunning() {
+    Process, Exist, Zigi Command Board.exe
+
+    if (ErrorLevel != 0)
+        return
+
+    Run, % A_ScriptDir "\dist\win-unpacked\Zigi Command Board.exe"
+}
+
 ; -------------------
 ; Persistent Listener
 ; -------------------
@@ -89,6 +98,7 @@ CheckModifiersFn() {
         {
             if (!wasDown)
             {
+                ; EnsureElectronRunning()
                 SendPipe("show")
                 wasDown := true
             }

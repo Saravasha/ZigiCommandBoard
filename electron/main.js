@@ -79,11 +79,19 @@ function createWindow() {
     mainWindow.loadURL("http://localhost:5173");
     mainWindow.on("moved", () => moveToTopRight(mainWindow));
     mainWindow.webContents.setZoomFactor(1);
+
+    mainWindow.webContents.on("did-finish-load", () => {
+      mainWindow.webContents.send("app-ready");
+    });
   } else {
     const prodPath = path.join(__dirname, "../ui/dist/index.html");
     mainWindow.loadFile(prodPath);
     mainWindow.on("moved", () => moveToTopRight(mainWindow));
     mainWindow.webContents.setZoomFactor(1);
+
+    mainWindow.webContents.on("did-finish-load", () => {
+      mainWindow.webContents.send("app-ready");
+    });
   }
 }
 
