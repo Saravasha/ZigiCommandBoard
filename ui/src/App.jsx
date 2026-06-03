@@ -1,6 +1,6 @@
 // app.jsx
 import { useEffect, useState } from "react";
-
+import appReadySound from "./assets/appReady.wav";
 import "./App.scss";
 // import "./assets/appReady.wav";
 
@@ -35,8 +35,8 @@ export default function App() {
   useEffect(() => {
     window.api.onAppReady(() => {
       console.log("app ready");
-      const audio = new Audio("./assets/appReady.wav");
-      audio.volume = 0.5;
+      const audio = new Audio(appReadySound);
+      audio.volume = 0.1;
       audio.play();
     });
   }, []);

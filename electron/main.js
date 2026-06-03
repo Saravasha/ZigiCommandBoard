@@ -82,8 +82,6 @@ function createWindow() {
     },
   });
 
-  mainWindow.webContents.openDevTools({ mode: "detach" });
-
   const isDev = !app.isPackaged;
   mainWindow.setTitle("Zigi Command Board");
 
@@ -134,6 +132,21 @@ function createTray() {
         }, 250);
       },
     },
+    { type: "separator" },
+
+    {
+      label: "Open DevTools",
+      click: () => {
+        if (!mainWindow) return;
+
+        mainWindow.show();
+        mainWindow.focus();
+        mainWindow.webContents.openDevTools({
+          mode: "detach",
+        });
+      },
+    },
+
     { type: "separator" },
     {
       label: "Quit",
