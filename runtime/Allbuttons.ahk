@@ -73,7 +73,7 @@ EnsureElectronRunning() {
     ; if (ErrorLevel != 0)
     ;     return
 
-    if (SendPipe("ping"))
+    if (SendPipe("bing"))
         return
 
         Run, % A_ScriptDir "\..\Zigi Command Board.exe"

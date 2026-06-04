@@ -41,19 +41,21 @@ export default function App() {
     });
   }, []);
 
-  window.api.getCommands().then((cmds) => {
-    const colored = cmds.map((cmd, i) => {
-      const bg = COLORS[i % COLORS.length];
+  useEffect(() => {
+    window.api.getCommands().then((cmds) => {
+      const colored = cmds.map((cmd, i) => {
+        const bg = COLORS[i % COLORS.length];
 
-      return {
-        ...cmd,
-        color: bg,
-        textColor: getTextColor(bg),
-      };
+        return {
+          ...cmd,
+          color: bg,
+          textColor: getTextColor(bg),
+        };
+      });
+
+      setCommands(colored);
     });
-
-    setCommands(colored);
-  });
+  }, []);
 
   useEffect(() => {
     const unsubscribe = window.api.onDashboardVisible((visible) => {
@@ -85,20 +87,16 @@ export default function App() {
             onClick={() => window.api.runCommand(cmd.id)}
             style={{
               backgroundColor: cmd.color,
-              left: cmd.x,
-              top: cmd.y,
             }}
           >
-            <h3
-              style={{
-                color: cmd.textColor,
-                background: "transparent",
-                border: "none",
-              }}
-            >
-              {cmd.name}
-            </h3>
-            {/* <h3 style={{ color: cmd.textColor }}>{cmd.shortcut}</h3> */}
+            <div className="content">
+              <h3 className="hotkey-display" style={{ color: cmd.textColor }}>
+                {cmd.hotkey}
+              </h3>
+              <h3 className="command-name" style={{ color: cmd.textColor }}>
+                {cmd.name}
+              </h3>
+            </div>
           </div>
         ))}
       </div>

@@ -200,7 +200,6 @@ function startPipeServer() {
     stream.on("data", (data) => {
       const msg = data.toString().trim();
       console.log("PIPE MSG:", msg);
-      console.log("RAW MSG:", JSON.stringify(msg));
       if (!mainWindow) return;
 
       if (msg === "ensure") {
@@ -210,8 +209,8 @@ function startPipeServer() {
         }
       }
 
-      if (msg === "ping") {
-        console.log("pong");
+      if (msg === "bing") {
+        console.log("bong");
         return;
       }
 

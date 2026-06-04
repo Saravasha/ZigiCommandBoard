@@ -10,23 +10,33 @@ body,
   --text-h: #f3f4f6;
   --border: #002bff00;
 }
+
+/* ─────────────────────────────
+   GLOBAL RESET
+───────────────────────────── */
 * {
   user-select: none;
-  -webkit-user-select: none; /* important for Electron/Chromium */
+  -webkit-user-select: none;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform-style: preserve-3d;
 }
 
-// Variables
-$cell-size: 12vw; // Cell width
-$columns: 6; // Number of columns
-$gap: 0.3vw; // Gap between cells
+/* ─────────────────────────────
+   LAYOUT VARIABLES
+───────────────────────────── */
+$cell-size: 15vw;
+$columns: 6;
+$gap: 0.3vw;
+
 $cell-height: $cell-size * 1.15;
 $container-width: ($cell-size + $gap) * $columns;
 $row-height: $cell-size * 0.8666;
 $margin-offset: $cell-size / 2 + $gap / 2;
 
+/* ─────────────────────────────
+   BOARD ANIMATION
+───────────────────────────── */
 .board {
   position: relative;
   opacity: 0;
@@ -48,71 +58,138 @@ $margin-offset: $cell-size / 2 + $gap / 2;
 .board.exiting {
   opacity: 0;
   transform: translateY(-20px) scale(0.98);
-  pointer-events: none;
 }
 
-body {
-  // background: transparent !important;
-  font-family: sans-serif;
-  // color: black;
-  animation: slideIn 2.5s ease-out;
-}
-
-.wrapper {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-}
-
+/* ─────────────────────────────
+   GRID
+───────────────────────────── */
 .honeycomb {
   display: grid;
   width: $container-width;
   margin: 0 auto;
   transform: translate(-$margin-offset/2);
+
   grid-template-columns: repeat($columns, minmax($cell-size, 1fr));
   grid-auto-rows: $row-height;
   gap: $gap;
+
   cursor: pointer;
 }
 
+/* ─────────────────────────────
+   HEX CELL (SINGLE SOURCE)
+───────────────────────────── */
 .cell {
   width: $cell-size;
   height: $cell-height;
-  margin: 0;
-  background-color: white;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  padding: 12%;
   overflow: hidden;
-  text-align: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  transition: transform 150ms ease;
-  font-size: clamp(10px, 1vw, 16px);
-  padding: 0.5em;
+
   text-align: center;
   word-break: break-word;
-  p {
-    margin: 1em;
-  }
+
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+
+  background: linear-gradient(
+    145deg,
+    rgba(230, 230, 230, 0.068),
+    rgba(248, 233, 233, 0)
+  );
+
+  /* clean 3D base */
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
+
+  will-change: transform;
 }
 
+/* hover lift */
 .cell:hover {
-  transform: scale(1.05);
-}
-.cell > * {
-  cursor: pointer;
+  transform: translateY(-3px) scale(1.05);
+
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.cell button {
-  font-size: clamp(10px, 1vw, 16px);
-  padding: 0.5em;
-  text-align: center;
-  word-break: break-word;
+/* click feedback */
+.cell:active {
+  transform: scale(0.98);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-// Staggering cells
+/* ─────────────────────────────
+   CONTENT SWAP (NAME ↔ HOTKEY)
+───────────────────────────── */
+.content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.command-name,
+.hotkey-display {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: opacity 150ms ease;
+}
+
+/* default state */
+.command-name {
+  opacity: 1;
+}
+
+.hotkey-display {
+  opacity: 0;
+}
+
+/* hover swap */
+.cell:hover .command-name {
+  opacity: 0;
+}
+
+.cell:hover .hotkey-display {
+  opacity: 1;
+}
+
+/* ─────────────────────────────
+   TEXT STYLES
+───────────────────────────── */
+.command-name {
+  font-weight: 700;
+  font-size: clamp(0.7rem, 0.9vw, 1rem);
+  line-height: 1.1;
+}
+
+.hotkey-display {
+  font-family: Consolas, monospace;
+  font-size: clamp(0.7rem, 0.7vw, 0.8rem);
+
+  padding: 2px;
+  border-radius: 999px;
+
+  backdrop-filter: blur(4px);
+}
+
+/* ─────────────────────────────
+   HEX STAGGER
+───────────────────────────── */
 @for $i from 1 through $columns {
   .cell:nth-child(#{$columns * 2}n + #{$columns + $i}) {
     margin-left: $margin-offset;
