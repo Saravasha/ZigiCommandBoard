@@ -12,6 +12,11 @@ FileEncoding, UTF-8
 ahkExe := "C:\Program Files\AutoHotkey\AutoHotkey.exe"
 commandScript := A_ScriptDir . "\Commands.ahk"
 wasDown := false
+
+Shutdown_ID := 0x5555 ; Custom message for communication with Shutdown.ahk
+
+Gui, +HwndMainHWND +ToolWindow -Caption
+Gui, Show, Hide
 SetBatchLines, -1
 
 ;--------------------
@@ -37,6 +42,14 @@ RunCommand(id)
     cmd := """" ahkExe """ """ commandScript """ " id
 
     RunWait, %cmd%
+}
+
+OnMessage(Shutdown_ID, "HandleShutdownEvent")
+
+HandleShutdownEvent(wParam, lParam, msg, hwnd)
+{
+    if (wParam = 1)
+        Orchestrator_ShutdownPC()
 }
 
 SendPipe(msg) {

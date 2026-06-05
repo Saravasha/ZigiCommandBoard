@@ -14,15 +14,6 @@ Orchestrator_CycleAudioDevice()
     Audio_CycleAudioDevice()
 }
 
-Orchestrator_CommandBoardShow() {
-    UI_CommandBoard_Show()
-    SetTimer, UI_CommandBoard_SlideIn, 10
-}
-
-Orchestrator_CommandBoardSlideOut() {
-    SetTimer, UI_CommandBoard_SlideOut, 10
-}
-
 Orchestrator_ToggleAHK()
 {
     global toggle
@@ -34,8 +25,6 @@ Orchestrator_ToggleAHK()
     if (toggle)
     {
         overlayEnabled := false
-
-        UI_CommandBoard_Hide()
 
         UI_Notification_Show("Suspended/Offline")
         Audio_PlayAHKState("ahk off")
@@ -69,14 +58,15 @@ Orchestrator_RebootPC()
 Orchestrator_ShutdownPC() 
 {
     global device
+
     if (device != "Speakers")
     {    
         device := "Speakers"
-        RunWait, % "nircmd setdefaultsounddevice ""Speakers"""
-        Audio_PlayDeviceName(device, true)
         UI_Notification_Show("Default device: " . device)
+        Audio_PlayDeviceName(device, true)
+        RunWait, % "nircmd setdefaultsounddevice ""Speakers"""
     }
-
+    
     UI_Notification_Show("Shutting down...") 
     Run % A_ScriptDir "\powerAction.ahk shutdown 5 " device
 }

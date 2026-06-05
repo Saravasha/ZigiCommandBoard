@@ -2,7 +2,7 @@
 #NoTrayIcon
 #SingleInstance Force
 
-countdown := 60  ; seconds
+countdown := 5  ; seconds
 
 ; Play warning sound
 SoundPlay, C:\Users\Siavash Gosheh\Music\shutdownwarning.wav
@@ -27,7 +27,11 @@ if (countdown <= 0)
 {
     SetTimer, UpdateTimer, Off
     Gui, Destroy
-    Run, % A_ScriptDir "\powerAction.ahk shutdown 5 notSpeaker"
+    DetectHiddenWindows, On
+
+    WinGet, hwnd, ID, ahk_exe AutoHotkey.exe
+
+    PostMessage, 0x5555, 1, 0,, ahk_id %hwnd% ;Send custom message to Allbuttons.ahk to trigger shutdown
     return
 
 }

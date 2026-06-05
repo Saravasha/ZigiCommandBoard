@@ -35,11 +35,11 @@ __DoAction:
 
 if (action = "shutdown")
 {
-    Shutdown, 1
+    ; Shutdown, 1
 }
 else if (action = "reboot")
 {
-    Shutdown, 2
+    ; Shutdown, 2
 }
 
 Gui, Destroy
