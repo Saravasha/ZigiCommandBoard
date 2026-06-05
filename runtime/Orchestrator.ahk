@@ -52,7 +52,7 @@ Orchestrator_ReloadAHK() {
 Orchestrator_RebootPC() 
 {
     UI_Notification_Show("Rebooting...")
-    Run % A_ScriptDir "\powerAction.ahk reboot 5 " device
+    Run % A_ScriptDir "\powerAction.ahk reboot 5"
 }
 
 Orchestrator_ShutdownPC() 
@@ -68,6 +68,6 @@ Orchestrator_ShutdownPC()
     }
     
     UI_Notification_Show("Shutting down...") 
-    Run % A_ScriptDir "\powerAction.ahk shutdown 5 " device
+    Run % A_ScriptDir "\powerAction.ahk shutdown 5"
 }
 

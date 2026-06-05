@@ -22,13 +22,13 @@ Audio_PlaySound(path, wait := false) {
 
 Audio_PlayAHKState(state, wait := false)
 {
-    path := "C:\Users\Siavash Gosheh\Music\" state ".wav"
+    path := A_ScriptDir . "\..\assets\" . state . ".wav"
     Audio_PlaySound(path, wait)
 }
 
 Audio_PlayDeviceName(device, wait := false) 
 {
-    path := A_WinDir "\Media\Starcrafty\" device ".wav"
+    path := A_ScriptDir . "\..\assets\" . device . ".wav"
     Audio_PlaySound(path, wait)
     
 }

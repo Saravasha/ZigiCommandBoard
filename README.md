@@ -30,7 +30,58 @@ Zigi Command Board is split into two core layers:
 - Initiates shutdown sequence
 - Sends IPC message to orchestrator
 
-### 🎛 Features
+## 🎛 Features
+
+### 📦 Building the Application
+
+#### ⚙️ Requirements
+
+#### Make sure you have installed dependencies before building:
+
+```
+npm install
+```
+
+### Production
+
+##### To generate a distributable build artifact of Zigi Command Board, run:
+
+```
+npm run dist
+```
+
+#### Creates a standalone installable application.
+
+#### This will:
+
+- Bundle the Electron application
+- Package all runtime dependencies
+- Include assets (UI, sounds, configs)
+- Output a distributable build in the dist/ folder
+
+### 📁 Output
+
+#### After the build completes, you will find:
+
+```
+parent folder of local repo/Zigi-Command-Board-Portable
+├── /resources/win-unpacked/
+├── /runtime
+├── /assets
+└── Zigi Command Board.exe
+```
+
+(Exact output may vary depending on your Electron builder configuration.)
+
+### 🚀 Development
+
+#### Development mode
+
+```
+npm run dev
+```
+
+#### Runs the Electron app with live reload (if configured).
 
 #### ⚙ System Control (AHK)
 
@@ -101,15 +152,7 @@ Audio files are imported via bundler-safe paths in Electron to ensure production
 - Electron UI: Active development
 - Legacy AHK GUI: Removed
 
-#### 🧭 Future Improvements
-
-- Event bus abstraction over PostMessage
-- Config-driven command system
-- Fully dynamic hex grid layout engine
-- Multi-profile command sets
-- Animated toast queue system
-- Electron ↔ AHK bidirectional sync layer
-  🏁 Summary
+#### 🏁 Summary
 
 Zigi Command Board is evolving into a dual-layer control system:
 
