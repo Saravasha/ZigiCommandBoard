@@ -4,6 +4,8 @@ A hybrid desktop command system combining **AutoHotkey (AHK)** for system orches
 
 The system is designed to act as a fast, keyboard-driven control layer for OS-level actions, audio routing, and application commands.
 
+<div align="center"><img width=100% src="./assets/preview.gif"></div>
+
 ---
 
 # 🚀 Overview
