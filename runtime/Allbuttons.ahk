@@ -194,6 +194,10 @@ return
 RunCommand("gmail")
 return
 
+^!P+:: 
+RunCommand("projects")
+return
+
 ^!+T:: 
 RunCommand("programs_and_features")
 return
