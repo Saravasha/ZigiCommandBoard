@@ -378,7 +378,7 @@ CommandMap["task_scheduler"] := Object("name", "Task Scheduler", "desc", "Opens 
 CommandMap["clock"] := Object("name", "Clock", "desc", "Opens the Windows Clock app", "hotkey", "Ctrl+Alt+Shift+I","category", "System", "exec", Func("Clock"))
 CommandMap["open_with_sublime_text"] := Object("name", "Open with Sublime Text", "desc", "Opens the selected file in Sublime Text 3", "hotkey", "Shift+Alt+S","category", "System", "exec", Func("OpenWithSublimeText"))
 CommandMap["open_with_windows_media_player"] := Object("name", "Open with Windows Media Player", "desc", "Opens the selected file in Windows Media Player", "hotkey", "Shift+Alt+W","category", "System", "exec", Func("OpenWithWindowsMediaPlayer"))
-CommandMap["projects"] := Object("name", "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects")
+CommandMap["projects"] := Object("name", "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects"))
 ; --------------------
 ; ENTRYPOINT
 ; --------------------

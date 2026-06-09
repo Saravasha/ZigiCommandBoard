@@ -194,7 +194,7 @@ return
 RunCommand("gmail")
 return
 
-^!P+:: 
+^!+P:: 
 RunCommand("projects")
 return
 
