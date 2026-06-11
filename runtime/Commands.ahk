@@ -48,6 +48,9 @@ MaxAllWindows()
         if (ProcessName = "electron.exe")
             continue
 
+        if (ProcessName = "Rainmeter.exe")
+            continue    
+
         WinMaximize, ahk_id %hwnd%
     }
     return
