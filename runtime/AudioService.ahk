@@ -34,7 +34,6 @@ Audio_PlayDeviceName(device, wait := false)
 }
 
 Audio_CycleAudioDevice()
-
 {
     global device
     if (device == "") {
