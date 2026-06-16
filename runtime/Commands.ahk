@@ -370,6 +370,7 @@ CommandMap["superscript_clipboard"] := Object("name", "Superscript Clipboard", "
 CommandMap["volume_mixer"] := Object("name", "Volume Mixer", "desc", "Toggles the volume mixer", "hotkey", "Ctrl+F11","category", "System", "exec", Func("VolumeMixer"))
 CommandMap["calculator"] := Object("name", "Calculator", "desc", "Opens or toggles the calculator app", "hotkey", "Ctrl+Alt+C","category", "System", "exec", Func("Calculator"))
 CommandMap["downloads"] := Object("name", "Downloads", "desc", "Opens the Downloads folder", "hotkey", "Ctrl+Alt+D","category", "System", "exec", Func("Downloads"))
+CommandMap["projects"] := Object("name",  "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects"))
 CommandMap["google_search_clipboard"] := Object("name", "Google Clipboard", "desc", "Prompts for a search query on the clipboard and searches it on Google", "hotkey", "Ctrl+Alt+Shift+G","category", "System", "exec", Func("GoogleSearchClipboard"))
 CommandMap["google_calendar"] := Object("name", "Google Calendar", "desc", "Opens the Google Calendar app", "hotkey", "Ctrl+Alt+G","category", "System", "exec", Func("GoogleCalendar"))
 CommandMap["gmail"] := Object("name", "Gmail", "desc", "Opens the Gmail app", "hotkey", "Ctrl+Alt+P","category", "System", "exec", Func("Gmail"))
@@ -378,7 +379,6 @@ CommandMap["task_scheduler"] := Object("name", "Task Scheduler", "desc", "Opens 
 CommandMap["clock"] := Object("name", "Clock", "desc", "Opens the Windows Clock app", "hotkey", "Ctrl+Alt+Shift+I","category", "System", "exec", Func("Clock"))
 CommandMap["open_with_sublime_text"] := Object("name", "Open with Sublime Text", "desc", "Opens the selected file in Sublime Text 3", "hotkey", "Shift+Alt+S","category", "System", "exec", Func("OpenWithSublimeText"))
 CommandMap["open_with_windows_media_player"] := Object("name", "Open with Windows Media Player", "desc", "Opens the selected file in Windows Media Player", "hotkey", "Shift+Alt+W","category", "System", "exec", Func("OpenWithWindowsMediaPlayer"))
-CommandMap["projects"] := Object("name", "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects"))
 ; --------------------
 ; ENTRYPOINT
 ; --------------------

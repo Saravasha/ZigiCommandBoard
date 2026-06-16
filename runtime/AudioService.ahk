@@ -34,8 +34,13 @@ Audio_PlayDeviceName(device, wait := false)
 }
 
 Audio_CycleAudioDevice()
+
 {
-   if (device == "Speakers") 
+    global device
+    if (device == "") {
+        device := "Speakers"
+    }
+    if (device == "Speakers") 
     {   
         device := "Headphones"
     }
