@@ -2,7 +2,7 @@
 #NoTrayIcon
 #SingleInstance Force
 
-countdown := 5  ; seconds
+countdown := 60  ; seconds
 
 ; Play warning sound
 SoundPlay, C:\Users\Siavash Gosheh\Music\shutdownwarning.wav
