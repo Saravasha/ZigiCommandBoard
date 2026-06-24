@@ -134,6 +134,11 @@ CheckModifiersFn() {
 ; Hotkeys
 ; --------------------
 
+; sc027 = Ö button, Win + Ö for windows terminal
+#sc027::
+RunCommand("bash_launcher")
+return
+
 !^E::
 RunCommand("minimize_all")
 return
@@ -201,7 +206,6 @@ return
 ^!+T:: 
 RunCommand("programs_and_features")
 return
-
 
 ^!+U:: 
 RunCommand("task_scheduler")
