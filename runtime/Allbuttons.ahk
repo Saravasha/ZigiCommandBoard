@@ -9,7 +9,8 @@ FileEncoding, UTF-8
 ;--------------------
 ; Globals
 ;--------------------
-ahkExe := "C:\Program Files\AutoHotkey\AutoHotkey.exe"
+; v1 if main install is v2 = "C:\Program Files\AutoHotkey\v1.1.37.02\AutoHotkeyU64.exe"
+ahkExe := "C:\Program Files\AutoHotkey\v1.1.37.02\AutoHotkeyU64.exe"
 commandScript := A_ScriptDir . "\Commands.ahk"
 wasDown := false
 

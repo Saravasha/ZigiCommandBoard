@@ -270,7 +270,7 @@ Downloads() {
     if WinExist("Downloads")
         WinActivate
     else
-        Run, C:\Users\Siavash Gosheh\Downloads
+        Run, % A_UserProfile . "\Downloads"
     return
 }
 
@@ -301,7 +301,7 @@ Projects() {
     if WinExist("Projects")
         WinActivate
     else
-        Run, C:\Users\Siavash Gosheh\Projects
+        Run, % A_UserProfile . "\Projects"
     return
 }
 
