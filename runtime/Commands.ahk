@@ -4,6 +4,8 @@
 
 global CommandMap := {}
 
+EnvGet, UserProfile, USERPROFILE
+
 ;--------------------
 ; Functions
 ;--------------------
@@ -269,8 +271,8 @@ Calculator() {
 Downloads() {
     if WinExist("Downloads")
         WinActivate
-    else
-        Run, % A_UserProfile . "\Downloads"
+    else 
+        Run, % UserProfile . "\Downloads"
     return
 }
 
@@ -301,7 +303,7 @@ Projects() {
     if WinExist("Projects")
         WinActivate
     else
-        Run, % A_UserProfile . "\Projects"
+        Run, % UserProfile .  "\Projects"
     return
 }
 
