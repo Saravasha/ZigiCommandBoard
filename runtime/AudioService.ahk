@@ -52,7 +52,15 @@ Audio_CycleAudioDevice()
         device := "Speakers"    
     }
 
-    RunWait, nircmd setdefaultsounddevice "%device%"
+   
+    RunWait, %ComSpec% /c nircmd.exe setdefaultsounddevice "%device%", , Hide
+
+    if (ErrorLevel != 0)
+    {
+        UI_Notification_Show("NirCmd unavailable.")
+        return
+    }
+
     UI_Notification_Show("Default device: " . device)
     Audio_PlayDeviceName(device)
 

@@ -303,7 +303,9 @@ Projects() {
     if WinExist("Projects")
         WinActivate
     else
-        Run, % UserProfile .  "\Projects"
+         library := UserProfile . "\AppData\Roaming\Microsoft\Windows\Libraries\Projects.library-ms"
+Run, % library
+    
     return
 }
 
