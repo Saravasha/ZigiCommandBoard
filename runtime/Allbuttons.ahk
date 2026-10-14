@@ -148,11 +148,9 @@ return
 RunCommand("max_all")
 return 
 
-
 !^+X::
 RunCommand("horizontal_tile_windows")
 return
-
 
 !^+C::
 RunCommand("cascade_windows")
@@ -174,7 +172,6 @@ return
 +!NumpadAdd::
 RunCommand("superscript_clipboard")
 return 
-
 
 ^F11::
 RunCommand("volume_mixer")
@@ -206,6 +203,10 @@ return
 
 ^!+T:: 
 RunCommand("programs_and_features")
+return
+
+^!Y::
+RunCommand("strikethrough_clipboard")
 return
 
 ^!+U:: 

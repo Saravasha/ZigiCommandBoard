@@ -10,6 +10,26 @@ EnvGet, UserProfile, USERPROFILE
 ; Functions
 ;--------------------
 
+StrikethroughClipboard() {
+    if (Clipboard = "")
+    return
+
+        text := Clipboard
+    result := ""
+
+    Loop, Parse, text
+    {
+        char := A_LoopField
+        ; Preserve line breaks and spaces
+        if (char = " " || char = "`r" || char = "`n" || char = "`t")
+            result .= char
+        else
+            result .= char . Chr(0x0336)
+    }
+    Clipboard := result
+    return
+}
+
 WinMinimizeAll() {
     WinMinimizeAll
     return
