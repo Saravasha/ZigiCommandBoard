@@ -70,6 +70,7 @@ function createWindow() {
     show: false,
     skipTaskbar: true,
     alwaysOnTop: true,
+    minimizable: false,
     x: 0,
     y: 0,
     autoHideMenuBar: true,

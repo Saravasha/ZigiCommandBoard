@@ -280,6 +280,11 @@ VolumeMixer() {
         Run, SndVol.exe
     return
 }
+
+ToggleDiscordInputMode() {
+    ; Just showing the Hotkey shortcut for now, as the actual implementation would require more context about Discord's API.
+}
+
 Calculator() {
     if WinExist("Calculator")
         WinActivate
@@ -409,6 +414,8 @@ CommandMap["open_with_sublime_text"] := Object("name", "Open with Sublime Text",
 CommandMap["open_with_windows_media_player"] := Object("name", "Open with Windows Media Player", "desc", "Opens the selected file in Windows Media Player", "hotkey", "Shift+Alt+W","category", "System", "exec", Func("OpenWithWindowsMediaPlayer"))
 CommandMap["projects"] := Object("name", "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects"))
 CommandMap["bash_launcher"] := Object("name", "Launch Bash", "desc", "Opens the Windows Bash Launcher", "hotkey", "Win + Ö","category", "System", "exec", Func("BashLauncher"))
+CommandMap["toggle_discord_input_mode"] := Object("name", "Toggle Discord Input Mode", "desc", "Toggles the input mode in Discord", "hotkey", "Ctrl + F12","category", "System", "exec", Func("ToggleDiscordInputMode"))
+CommandMap["strikethrough_clipboard"] := Object("name", "Strikethrough Clipboard", "desc", "Transforms selected text to strikethrough and pastes it", "hotkey", "Ctrl+Alt+Y","category", "Text Transformation", "exec", Func("StrikethroughClipboard"))
 
 
 ; --------------------
