@@ -31,8 +31,42 @@ const baseDir = isProd
 
 const workerScript = path.join(baseDir, "runtime", "Commands.ahk");
 console.log("PRELOAD PATH:", path.join(__dirname, "preload.js"));
-const ahkExe = "C:\\Program Files\\AutoHotkey\\AutoHotkey.exe";
 
+function resolveAhkV1() {
+  const roots = [
+    process.env.ProgramFiles,
+    process.env["ProgramFiles(x86)"],
+    process.env.LOCALAPPDATA,
+  ].filter(Boolean);
+
+  for (const root of roots) {
+    const ahkDir = path.join(root, "AutoHotkey");
+
+    if (!fs.existsSync(ahkDir)) continue;
+
+    // Discover installed v1 directories.
+    const versions = fs.readdirSync(ahkDir)
+      .filter(name => /^v1(?:\.|$)/i.test(name))
+      .sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+
+    for (const version of versions) {
+      const executable = path.join(
+        ahkDir,
+        version,
+        "AutoHotkeyU64.exe"
+      );
+
+      if (fs.existsSync(executable)) {
+        return executable;
+      }
+    }
+  }
+
+  throw new Error(
+    "AutoHotkey v1 (64-bit Unicode) was not found."
+  );
+}
+const ahkExe = resolveAhkV1();
 // --------------------
 // WINDOW
 // --------------------
@@ -170,6 +204,10 @@ ipcMain.handle("get-commands", () => {
 ipcMain.handle("run-command", (event, commandId) => {
   console.log("RUN COMMAND:", commandId);
 
+  
+console.log("AHK EXISTS:", fs.existsSync(ahkExe));
+console.log("SCRIPT EXISTS:", fs.existsSync(workerScript));
+
   execFile(ahkExe, [workerScript, commandId]);
 });
 
@@ -192,6 +230,7 @@ app.on("before-quit", () => {
     pipeServer = null;
   }
 });
+
 
 function startPipeServer() {
   if (pipeServer) return;

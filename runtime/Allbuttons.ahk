@@ -6,12 +6,12 @@
 FileEncoding, UTF-8
 ;Modifiers: ; + = shift ; ! = alt ; ^ = ctrl
 #include %A_ScriptDir%\Orchestrator.ahk
+#Include %A_ScriptDir%\Persistence.ahk
 ;--------------------
 ; Globals
 ;--------------------
 ; v1 if main install is v2 = "C:\Program Files\AutoHotkey\v1.1.37.02\AutoHotkeyU64.exe"
-ahkExe := "C:\Program Files\AutoHotkey\v1.1.37.02\AutoHotkeyU64.exe"
-commandScript := A_ScriptDir . "\Commands.ahk"
+ahkExe := A_AhkPathcommandScript := A_ScriptDir . "\Commands.ahk"
 wasDown := false
 
 Shutdown_ID := 0x5555 ; Custom message for communication with Shutdown.ahk
@@ -35,15 +35,33 @@ IsGameActive()
     
     return false
 }
+ 
 
-RunCommand(id)
+
+RunCommand(id, args*)
 {
     global ahkExe, commandScript
 
-    cmd := """" ahkExe """ """ commandScript """ " id
+    cmd := """" ahkExe """ """ commandScript """ """ id """"
 
-    RunWait, %cmd%
+    for _, arg in args
+        cmd .= " """ StrReplace(arg, """", """""") """"
+
+    if (id = "virtual_clipboard")
+    {
+        ; Pass this script's HWND to Commands.ahk
+        cmd .= " """ A_ScriptHwnd """"
+
+        ; Nonblocking, so we can receive its message
+        Run, %cmd%
+    }
+    else
+    {
+        RunWait, %cmd%
+    }
 }
+
+
 
 OnMessage(Shutdown_ID, "HandleShutdownEvent")
 
@@ -131,9 +149,44 @@ CheckModifiersFn() {
     }
 }
 
+Persistence_Init()
+
 ; --------------------
 ; Hotkeys
 ; --------------------
+
+; Virtual clipboard slot selection
+global VirtualClipboardSlot := 0
+
+^2::VirtualClipboardSlot := 2@@@@@££
+^3::VirtualClipboardSlot := 3
+^4::VirtualClipboardSlot := 4
+
+#If (VirtualClipboardSlot && GetKeyState("Ctrl", "P"))
+
+$^c::
+    RunCommand("virtual_clipboard", VirtualClipboardSlot, "copy")
+    VirtualClipboardSlot := 0
+return
+
+$^x::
+    RunCommand("virtual_clipboard", VirtualClipboardSlot, "cut")
+    VirtualClipboardSlot := 0
+return
+
+$^v::
+    MsgBox, 64, Virtual Clipboard, % "Intercepted paste for slot " VirtualClipboardSlot
+    RunCommand("virtual_clipboard", VirtualClipboardSlot, "paste")
+    VirtualClipboardSlot := 0
+return
+
+#If
+
+; Reset the selection when Ctrl is released
+~LControl Up::
+~RControl Up::
+    VirtualClipboardSlot := 0
+return
 
 ; sc027 = Ö button, Win + Ö for windows terminal
 #sc027::

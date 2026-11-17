@@ -47,20 +47,30 @@ function parseAhk(filePath, options = { debug: true }) {
   return commands;
 }
 
+
 function parseObject(str) {
   const result = {};
 
-  // matches: "key", "value"
+  // Parse ordinary string properties.
   const pairRegex = /"([^"]+)"\s*,\s*"([^"]*)"/g;
 
   let match;
   while ((match = pairRegex.exec(str)) !== null) {
     const key = match[1].toLowerCase();
-    const value = match[2];
-    result[key] = value;
+    result[key] = match[2];
+  }
+
+  // Parse AHK function references.
+  // const funcRegex = /"exec"\s*,\s*Func\s*\(\s*"([^"]+)"\s*\)/i;
+  const funcRegex = /"exec"\s*,\s*Func\s*\(\s*"([^"]+)"/i;
+  const funcMatch = str.match(funcRegex);
+
+  if (funcMatch) {
+    result.exec = funcMatch[1];
   }
 
   return result;
 }
+
 
 module.exports = { parseAhk };
