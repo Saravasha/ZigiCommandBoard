@@ -299,6 +299,11 @@ VolumeMixer() {
         Run, SndVol.exe
     return
 }
+
+ToggleDiscordInputMode() {
+    ; Just showing the Hotkey shortcut for now, as the actual implementation would require more context about Discord's API.
+}
+
 Calculator() {
     if WinExist("Calculator")
         WinActivate
