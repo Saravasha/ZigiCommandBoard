@@ -4,61 +4,40 @@
 
 global CommandMap := {}
 
-EnvGet, UserProfile, USERPROFILE
-
 ;--------------------
 ; Functions
 ;--------------------
 
+StrikethroughClipboard() {
+    if (Clipboard = "")
+        return
 
-VirtualClipboardCommand(slot, operation, targetHwnd)
-{
+    text := Clipboard
+    result := ""
 
-      MsgBox, 64, IPC Sender Debug, % "Slot: " slot
-        . "`nOperation: " operation
-        . "`nTarget HWND: " targetHwnd
-        . "`nValid window: " DllCall("IsWindow", "Ptr", targetHwnd)
-    ; Verify that the target window still exists
-    if (!DllCall("IsWindow", "Ptr", targetHwnd))
-        return false
-
-    payload := slot . "|" . operation
-
-    ; Encode payload as UTF-16
-    VarSetCapacity(data, (StrLen(payload) + 1) * 2, 0)
-    StrPut(payload, &data, "UTF-16")
-
-    ; Construct COPYDATASTRUCT
-    VarSetCapacity(cds, 3 * A_PtrSize, 0)
-
-    NumPut((StrLen(payload) + 1) * 2
-        , cds, A_PtrSize, "UInt")
-
-    NumPut(&data, cds, 2 * A_PtrSize, "Ptr")
-
-    ; Send WM_COPYDATA to the supplied HWND
-    DetectHiddenWindows, On
-
-    SendMessage, 0x004A, 0, &cds,, % "ahk_id " targetHwnd,,,, 1000
-
-    sendResult := ErrorLevel
-
-    MsgBox, 64, IPC Debug, % "SendMessage result: " sendResult
-
-    return (ErrorLevel != "FAIL" && ErrorLevel != 0)
+    Loop, Parse, text
+    {
+        char := A_LoopField
+        ; Preserve line breaks and spaces
+        if (char = " " || char = "`r" || char = "`n" || char = "`t")
+            result .= char
+        else
+            result .= char . Chr(0x0336)
+    }
+    Clipboard := result
+    return
 }
-
 
 WinMinimizeAll() {
     WinMinimizeAll
     return
 }
-  
+
 MaxAllWindows()
 {
     WinGet, id, List
     Loop, %id%
-         
+
     {
         hwnd := id%A_Index%
 
@@ -74,7 +53,7 @@ MaxAllWindows()
         if (class = "Shell_TrayWnd")
             continue
 
-        
+
         WinGetTitle, title, ahk_id %hwnd%
         if (title = "")
             continue
@@ -315,8 +294,8 @@ Calculator() {
 Downloads() {
     if WinExist("Downloads")
         WinActivate
-    else 
-        Run, % UserProfile . "\Downloads"
+    else
+        Run, C:\Users\Siavash Gosheh\Downloads
     return
 }
 
@@ -347,9 +326,7 @@ Projects() {
     if WinExist("Projects")
         WinActivate
     else
-         library := UserProfile . "\AppData\Roaming\Microsoft\Windows\Libraries\Projects.library-ms"
-Run, % library
-    
+        Run, C:\Users\Siavash Gosheh\Projects
     return
 }
 
@@ -390,10 +367,10 @@ OpenWithSublimeText() {
     send ^{c}
     clipWait, 0.3
     sublime_path := portable_apps "C:\Program Files\Sublime Text\sublime_text.exe"
-if fileExist(clipboard)
-    run, %sublime_path% "%clipboard%", , useErrorLevel
-clipboard := revert_clipboard
-return
+    if fileExist(clipboard)
+        run, %sublime_path% "%clipboard%", , useErrorLevel
+    clipboard := revert_clipboard
+    return
 }
 
 OpenWithWindowsMediaPlayer() {
@@ -402,10 +379,10 @@ OpenWithWindowsMediaPlayer() {
     send ^{c}   
     clipWait, 0.3
     mediaplayer_path := portable_apps "C:\Program Files\Windows Media Player\wmplayer.exe"
-if fileExist(clipboard)
-    run, %mediaplayer_path% "%clipboard%", , useErrorLevel
-clipboard := revert_clipboard
-return
+    if fileExist(clipboard)
+        run, %mediaplayer_path% "%clipboard%", , useErrorLevel
+    clipboard := revert_clipboard
+    return
 }
 
 ; --------------------
@@ -433,9 +410,8 @@ CommandMap["open_with_sublime_text"] := Object("name", "Open with Sublime Text",
 CommandMap["open_with_windows_media_player"] := Object("name", "Open with Windows Media Player", "desc", "Opens the selected file in Windows Media Player", "hotkey", "Shift+Alt+W","category", "System", "exec", Func("OpenWithWindowsMediaPlayer"))
 CommandMap["projects"] := Object("name", "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects"))
 CommandMap["bash_launcher"] := Object("name", "Launch Bash", "desc", "Opens the Windows Bash Launcher", "hotkey", "Win + Ö","category", "System", "exec", Func("BashLauncher"))
+CommandMap["toggle_discord_input_mode"] := Object("name", "Toggle Discord Input Mode", "desc", "Toggles the input mode in Discord", "hotkey", "Ctrl + F12","category", "System", "exec", Func("ToggleDiscordInputMode"))
 CommandMap["strikethrough_clipboard"] := Object("name", "Strikethrough Clipboard", "desc", "Transforms selected text to strikethrough and pastes it", "hotkey", "Ctrl+Alt+Y","category", "Text Transformation", "exec", Func("StrikethroughClipboard"))
-CommandMap["virtual_clipboard"] := Object("name", "Virtual Clipboard","desc", "Copy, cut, or paste using an isolated clipboard slot","hotkey", "Ctrl + 2/3/4 + C/X/V","category", "Clipboard","exec", Func("VirtualClipboardCommand"))
-
 
 ; --------------------
 ; ENTRYPOINT
@@ -445,14 +421,11 @@ if (A_Args.Length() > 0)
 {
     cmd := A_Args[1]
 
+    ;msgBox, Received command: %cmd%
+
     if (CommandMap.HasKey(cmd))
     {
-        args := []
-
-        Loop % A_Args.Length() - 1
-            args.Push(A_Args[A_Index + 1])
-
-        CommandMap[cmd].exec.Call(args*)
+        CommandMap[cmd].exec.Call()
     }
 }
 

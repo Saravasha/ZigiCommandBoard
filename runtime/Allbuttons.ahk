@@ -6,12 +6,11 @@
 FileEncoding, UTF-8
 ;Modifiers: ; + = shift ; ! = alt ; ^ = ctrl
 #include %A_ScriptDir%\Orchestrator.ahk
-#Include %A_ScriptDir%\Persistence.ahk
 ;--------------------
 ; Globals
 ;--------------------
-; v1 if main install is v2 = "C:\Program Files\AutoHotkey\v1.1.37.02\AutoHotkeyU64.exe"
-ahkExe := A_AhkPathcommandScript := A_ScriptDir . "\Commands.ahk"
+ahkExe := A_AhkPath
+commandScript := A_ScriptDir . "\Commands.ahk"
 wasDown := false
 
 Shutdown_ID := 0x5555 ; Custom message for communication with Shutdown.ahk
@@ -32,36 +31,18 @@ IsGameActive()
         return true
     if WinActive("ahk_exe Warcraft III.exe")
         return true
-    
+
     return false
 }
- 
 
-
-RunCommand(id, args*)
+RunCommand(id)
 {
     global ahkExe, commandScript
 
-    cmd := """" ahkExe """ """ commandScript """ """ id """"
+    cmd := """" ahkExe """ """ commandScript """ " id
 
-    for _, arg in args
-        cmd .= " """ StrReplace(arg, """", """""") """"
-
-    if (id = "virtual_clipboard")
-    {
-        ; Pass this script's HWND to Commands.ahk
-        cmd .= " """ A_ScriptHwnd """"
-
-        ; Nonblocking, so we can receive its message
-        Run, %cmd%
-    }
-    else
-    {
-        RunWait, %cmd%
-    }
+    RunWait, %cmd%
 }
-
-
 
 OnMessage(Shutdown_ID, "HandleShutdownEvent")
 
@@ -85,16 +66,16 @@ SendPipe(msg) {
 
     if (pipe = -1)
         return false
-        data := msg . "`n"
-        VarSetCapacity(buf, StrPut(data, "UTF-8"), 0)
-        StrPut(data, &buf, "UTF-8")
+    data := msg . "`n"
+    VarSetCapacity(buf, StrPut(data, "UTF-8"), 0)
+    StrPut(data, &buf, "UTF-8")
 
-        DllCall("WriteFile"
-            , "Ptr", pipe
-            , "Ptr", &buf
-            , "UInt", StrLen(data)
-            , "UInt*", written
-            , "UInt", 0)
+    DllCall("WriteFile"
+        , "Ptr", pipe
+        , "Ptr", &buf
+        , "UInt", StrLen(data)
+        , "UInt*", written
+        , "UInt", 0)
 
     DllCall("CloseHandle", "Ptr", pipe)
     return true
@@ -108,7 +89,7 @@ EnsureElectronRunning() {
     if (SendPipe("bing"))
         return
 
-        Run, % A_ScriptDir "\..\Zigi Command Board.exe"
+    Run, % A_ScriptDir "\..\Zigi Command Board.exe"
 
     Sleep, 1500
 }
@@ -130,180 +111,147 @@ CheckModifiersFn() {
     shift := GetKeyState("Shift", "P")
     alt   := GetKeyState("Alt", "P")
 
-        if (ctrl && shift && alt)
+    if (ctrl && shift && alt)
+    {
+        if (!wasDown)
         {
-            if (!wasDown)
-            {
-                EnsureElectronRunning()
-                SendPipe("show")
-                wasDown := true
-            }
+            EnsureElectronRunning()
+            SendPipe("show")
+            wasDown := true
         }
-        else
+    }
+    else
+    {
+        if (wasDown)
         {
-            if (wasDown)
-            {
-                SendPipe("hide")
-                wasDown := false
-            }
+            SendPipe("hide")
+            wasDown := false
+        }
     }
 }
-
-Persistence_Init()
 
 ; --------------------
 ; Hotkeys
 ; --------------------
 
-; Virtual clipboard slot selection
-global VirtualClipboardSlot := 0
-
-^2::VirtualClipboardSlot := 2@@@@@££
-^3::VirtualClipboardSlot := 3
-^4::VirtualClipboardSlot := 4
-
-#If (VirtualClipboardSlot && GetKeyState("Ctrl", "P"))
-
-$^c::
-    RunCommand("virtual_clipboard", VirtualClipboardSlot, "copy")
-    VirtualClipboardSlot := 0
-return
-
-$^x::
-    RunCommand("virtual_clipboard", VirtualClipboardSlot, "cut")
-    VirtualClipboardSlot := 0
-return
-
-$^v::
-    MsgBox, 64, Virtual Clipboard, % "Intercepted paste for slot " VirtualClipboardSlot
-    RunCommand("virtual_clipboard", VirtualClipboardSlot, "paste")
-    VirtualClipboardSlot := 0
-return
-
-#If
-
-; Reset the selection when Ctrl is released
-~LControl Up::
-~RControl Up::
-    VirtualClipboardSlot := 0
-return
-
 ; sc027 = Ö button, Win + Ö for windows terminal
 #sc027::
-RunCommand("bash_launcher")
+    RunCommand("bash_launcher")
 return
 
 !^E::
-RunCommand("minimize_all")
+    RunCommand("minimize_all")
 return
 
 !^+Z::
-RunCommand("max_all")
+    RunCommand("max_all")
 return 
 
+
 !^+X::
-RunCommand("horizontal_tile_windows")
+    RunCommand("horizontal_tile_windows")
 return
 
+
 !^+C::
-RunCommand("cascade_windows")
+    RunCommand("cascade_windows")
 return
 
 !^+V::
-RunCommand("vertical_tile_windows")
+    RunCommand("vertical_tile_windows")
 return
 
 ; Empty trash
 #Del::
-RunCommand("file_recycle_empty")
+    RunCommand("file_recycle_empty")
 return
 
 +!NumpadSub::
-RunCommand("subscript_clipboard")
+    RunCommand("subscript_clipboard")
 return
 
 +!NumpadAdd::
-RunCommand("superscript_clipboard")
+    RunCommand("superscript_clipboard")
 return 
 
 ^F11::
-RunCommand("volume_mixer")
+    RunCommand("volume_mixer")
 return
- 
+
 !^C::
-RunCommand("calculator")
+    RunCommand("calculator")
 return
 
 ^!D:: 
-RunCommand("downloads")
+    RunCommand("downloads")
 return
 
 ^!+G::
-RunCommand("google_search_clipboard")
+    RunCommand("google_search_clipboard")
 return
 
 ^!G::
-RunCommand("google_calendar")
+    RunCommand("google_calendar")
 return
 
 ^!P:: 
-RunCommand("gmail")
+    RunCommand("gmail")
 return
 
 ^!+P:: 
-RunCommand("projects")
+    RunCommand("projects")
 return
 
 ^!+T:: 
-RunCommand("programs_and_features")
+    RunCommand("programs_and_features")
 return
 
 ^!Y::
-RunCommand("strikethrough_clipboard")
+    RunCommand("strikethrough_clipboard")
 return
 
 ^!+U:: 
-RunCommand("task_scheduler")
+    RunCommand("task_scheduler")
 return
 
 ^!+I::
-RunCommand("clock")
+    RunCommand("clock")
 return
 
 ; -- Command to open file in Sublime Text 3
 #ifWinActive ahk_class CabinetWClass  ; file Explorer
 +!S::
-RunCommand("open_with_sublime_text")
+    RunCommand("open_with_sublime_text")
 return
 #ifWinActive
 
 ; -- Command to open file in Windows Media Player
 #ifWinActive ahk_class CabinetWClass  ; file Explorer
 +!W::
-RunCommand("open_with_windows_media_player")
+    RunCommand("open_with_windows_media_player")
 return
 #ifWinActive
 
 ; -- AHK Script Toggler
 +F5::
-Suspend, Permit
-Orchestrator_ToggleAHK()
+    Suspend, Permit
+    Orchestrator_ToggleAHK()
 return
 
 ; -- AHK reload
 #F5::
-Suspend Permit
-Orchestrator_ReloadAHK()
+    Suspend Permit
+    Orchestrator_ReloadAHK()
 return
 
 +Pause::
-Orchestrator_CycleAudioDevice()
+    Orchestrator_CycleAudioDevice()
 return
 
 ; -- Close windows/apps Shortcut. Ctrl+W
 #If WinActive("Calculator") or WinActive("Volume Mixer") or WinActive("Clock") or WinActive("Task Manager") or WinActive("Task Scheduler")
 ^W::
-WinClose
+    WinClose
 return
 #If 
 
@@ -327,12 +275,17 @@ return
 #If
 
 !+PgUp::
-Orchestrator_RebootPC()
+    Orchestrator_RebootPC()
 return
 
 !+PgDn::
-Orchestrator_ShutdownPC()
+    Orchestrator_ShutdownPC()
 return
+
+#IfWinActive ahk_exe RimWorldWin64.exe
+!s::Down
++!s::+Down
+#IfWinActive
 
 #IfWinActive Warcraft III
 ; Recommended for performance
@@ -344,75 +297,75 @@ SendMode Input
 ; Press the < key and click and un-click the left mouse button
 +<::
 <::
-click Down left
-click Up left
+    click Down left
+    click Up left
 return
 
 ; Press the z key and click and un-click the right mouse button
 +Z::
 Z::
-click Down right
-click Up right
+    click Down right
+    click Up right
 return
 
 !^1::
-send {F1}
+    send {F1}
 return
 
 !^2::
-send {F2}
+    send {F2}
 return
 
 !^3::
-send {F3}
+    send {F3}
 return
 
 !^4::
-send {F4}
+    send {F4}
 return
 
 ;Idle Workers remap to Alt+Q
 
 +!Q::
-send +{F8}
+    send +{F8}
 return
 
 ^!Q::
-send ^{F8}
+    send ^{F8}
 return
 
 !Q::
-send {F8}
+    send {F8}
 return
 
 ^Q::
-click Down left
-click Up left
+    click Down left
+    click Up left
 return 
 
 ^W::
-click Down left
-click Up left
+    click Down left
+    click Up left
 return 
 
 ^E::
-click Down left
-click Up left
+    click Down left
+    click Up left
 return 
 
 ^R::
-click Down left
-click Up left
+    click Down left
+    click Up left
 return 
 
 ;focus selected unit
 ^F::
-send ^{C}
+    send ^{C}
 return
 
 ; remap base cycling
 SC029::
-send {BackSpace}
+    send {BackSpace}
 return
 
 #IfWinActive
@@ -429,24 +382,24 @@ SendMode Input
 ^Q::
 +Q::
 Q::
-click Down left
-keywait Q
-click Up left
+    click Down left
+    keywait Q
+    click Up left
 return
 
 ^<::
 +<::
 <::
-click Down left
-click Up left
+    click Down left
+    click Up left
 return
 
 ; Press the W key and click and un-click the right mouse button
 +W::
 W::
-click Down right
-keywait W
-click Up right
+    click Down right
+    keywait W
+    click Up right
 return
 
 #IfWinActive

@@ -47,7 +47,6 @@ function parseAhk(filePath, options = { debug: true }) {
   return commands;
 }
 
-
 function parseObject(str) {
   const result = {};
 
@@ -71,6 +70,5 @@ function parseObject(str) {
 
   return result;
 }
-
 
 module.exports = { parseAhk };
