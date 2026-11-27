@@ -39,6 +39,7 @@ Audio_CycleAudioDevice()
     if (device == "") {
         device := "Speakers"
     }
+
     if (device == "Speakers") 
     {   
         device := "Headphones"
@@ -51,7 +52,6 @@ Audio_CycleAudioDevice()
     {
         device := "Speakers"    
     }
-
 
     RunWait, %ComSpec% /c nircmd.exe setdefaultsounddevice "%device%", , Hide
 
