@@ -66,7 +66,7 @@ Orchestrator_ShutdownPC()
         Audio_PlayDeviceName(device, true)
         RunWait, % "nircmd setdefaultsounddevice ""Speakers"""
     }
-    
+
     UI_Notification_Show("Shutting down...") 
     Run % A_ScriptDir "\powerAction.ahk shutdown 5"
 }

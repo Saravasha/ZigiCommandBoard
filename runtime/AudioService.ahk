@@ -12,7 +12,7 @@ global device := "Speakers"
 ;--------------------
 
 Audio_PlaySound(path, wait := false) {
-    
+
     if (wait) {
         SoundPlay, %path%, wait
         return
@@ -30,7 +30,7 @@ Audio_PlayDeviceName(device, wait := false)
 {
     path := A_ScriptDir . "\..\assets\" . device . ".wav"
     Audio_PlaySound(path, wait)
-    
+
 }
 
 Audio_CycleAudioDevice()
@@ -52,7 +52,7 @@ Audio_CycleAudioDevice()
         device := "Speakers"    
     }
 
-   
+
     RunWait, %ComSpec% /c nircmd.exe setdefaultsounddevice "%device%", , Hide
 
     if (ErrorLevel != 0)

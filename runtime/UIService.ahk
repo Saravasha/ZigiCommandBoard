@@ -28,17 +28,17 @@ __BuildOptions(type, params)
 {
     if (type = "CommandBoard")
         return "NoActivate x" . params.x . " y" . params.y
-    
+
     if (type = "Notification")
-        {
-            x := (params.x != "") ? params.x : 0
-            y := (params.y != "") ? params.y : 0
-            w := (params.w != "") ? params.w : 200
-            h := (params.h != "") ? params.h : 30
-            
-            return "NoActivate x" x " y" y " w" w " h" h
-        }
-        MsgBox, Invalid UI option type: %type%
+    {
+        x := (params.x != "") ? params.x : 0
+        y := (params.y != "") ? params.y : 0
+        w := (params.w != "") ? params.w : 200
+        h := (params.h != "") ? params.h : 30
+
+        return "NoActivate x" x " y" y " w" w " h" h
+    }
+    MsgBox, Invalid UI option type: %type%
     return ""
 }
 
