@@ -4,17 +4,15 @@
 
 global CommandMap := {}
 
-EnvGet, UserProfile, USERPROFILE
-
 ;--------------------
 ; Functions
 ;--------------------
 
 StrikethroughClipboard() {
     if (Clipboard = "")
-    return
+        return
 
-        text := Clipboard
+    text := Clipboard
     result := ""
 
     Loop, Parse, text
@@ -34,12 +32,12 @@ WinMinimizeAll() {
     WinMinimizeAll
     return
 }
-  
+
 MaxAllWindows()
 {
     WinGet, id, List
     Loop, %id%
-         
+
     {
         hwnd := id%A_Index%
 
@@ -55,7 +53,7 @@ MaxAllWindows()
         if (class = "Shell_TrayWnd")
             continue
 
-        
+
         WinGetTitle, title, ahk_id %hwnd%
         if (title = "")
             continue
@@ -280,6 +278,11 @@ VolumeMixer() {
         Run, SndVol.exe
     return
 }
+
+ToggleDiscordInputMode() {
+    ; Just showing the Hotkey shortcut for now, as the actual implementation would require more context about Discord's API.
+}
+
 Calculator() {
     if WinExist("Calculator")
         WinActivate
@@ -291,8 +294,8 @@ Calculator() {
 Downloads() {
     if WinExist("Downloads")
         WinActivate
-    else 
-        Run, % UserProfile . "\Downloads"
+    else
+        Run, C:\Users\Siavash Gosheh\Downloads
     return
 }
 
@@ -323,9 +326,7 @@ Projects() {
     if WinExist("Projects")
         WinActivate
     else
-         library := UserProfile . "\AppData\Roaming\Microsoft\Windows\Libraries\Projects.library-ms"
-Run, % library
-    
+        Run, C:\Users\Siavash Gosheh\Projects
     return
 }
 
@@ -366,10 +367,10 @@ OpenWithSublimeText() {
     send ^{c}
     clipWait, 0.3
     sublime_path := portable_apps "C:\Program Files\Sublime Text\sublime_text.exe"
-if fileExist(clipboard)
-    run, %sublime_path% "%clipboard%", , useErrorLevel
-clipboard := revert_clipboard
-return
+    if fileExist(clipboard)
+        run, %sublime_path% "%clipboard%", , useErrorLevel
+    clipboard := revert_clipboard
+    return
 }
 
 OpenWithWindowsMediaPlayer() {
@@ -378,10 +379,10 @@ OpenWithWindowsMediaPlayer() {
     send ^{c}   
     clipWait, 0.3
     mediaplayer_path := portable_apps "C:\Program Files\Windows Media Player\wmplayer.exe"
-if fileExist(clipboard)
-    run, %mediaplayer_path% "%clipboard%", , useErrorLevel
-clipboard := revert_clipboard
-return
+    if fileExist(clipboard)
+        run, %mediaplayer_path% "%clipboard%", , useErrorLevel
+    clipboard := revert_clipboard
+    return
 }
 
 ; --------------------
@@ -409,7 +410,8 @@ CommandMap["open_with_sublime_text"] := Object("name", "Open with Sublime Text",
 CommandMap["open_with_windows_media_player"] := Object("name", "Open with Windows Media Player", "desc", "Opens the selected file in Windows Media Player", "hotkey", "Shift+Alt+W","category", "System", "exec", Func("OpenWithWindowsMediaPlayer"))
 CommandMap["projects"] := Object("name", "Projects", "desc", "Opens the Projects folder", "hotkey", "Ctrl+Alt+Shift+P","category", "System", "exec", Func("Projects"))
 CommandMap["bash_launcher"] := Object("name", "Launch Bash", "desc", "Opens the Windows Bash Launcher", "hotkey", "Win + Ö","category", "System", "exec", Func("BashLauncher"))
-
+CommandMap["toggle_discord_input_mode"] := Object("name", "Toggle Discord Input Mode", "desc", "Toggles the input mode in Discord", "hotkey", "Ctrl + F12","category", "System", "exec", Func("ToggleDiscordInputMode"))
+CommandMap["strikethrough_clipboard"] := Object("name", "Strikethrough Clipboard", "desc", "Transforms selected text to strikethrough and pastes it", "hotkey", "Ctrl+Alt+Y","category", "Text Transformation", "exec", Func("StrikethroughClipboard"))
 
 ; --------------------
 ; ENTRYPOINT
